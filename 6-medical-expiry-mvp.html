@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — Медосмотры и сроки</title>
+  <style>
+    :root {
+      --bg:#f3f5f9; --surface:#fff; --text:#15233b; --muted:#607089; --line:#dde3ec;
+      --accent:#2d5bff; --ok:#1f9d57; --ok-soft:#e8f8ef; --warn:#d97706; --warn-soft:#fff6e8;
+      --danger:#c62828; --danger-soft:#ffeded; --shadow:0 10px 24px rgba(21,35,59,.08); --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 100% 0,#eaf0ff 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
+    .container{max-width:1360px;margin:0 auto;padding:24px;display:grid;gap:14px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;transition:transform .16s ease,box-shadow .16s ease}
+    .card:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(21,35,59,.11)}
+    .header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#fff;background:linear-gradient(125deg,#15233b,#1f3c68);border:none}
+    h1,h2,h3,p,ul{margin:0}.subtitle{color:#c9d8ff;margin-top:6px;font-size:.95rem}
+    .actions,.quick-actions,.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{border:none;border-radius:10px;padding:9px 12px;font-weight:600;cursor:pointer;transition:transform .14s ease,opacity .14s ease}
+    .btn:hover{transform:translateY(-1px);opacity:.95}.btn-primary{background:var(--accent);color:#fff}.btn-secondary{background:#edf2ff;color:#163172}.btn-ghost{background:#fff;color:#163172}.btn-danger{background:#b71c1c;color:#fff}
+    .summary{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:10px}
+    .metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:grid;gap:6px}.metric .value{font-size:1.45rem;font-weight:700}
+    .metric.ok{border-color:#cdeedc;background:var(--ok-soft)}.metric.warn{border-color:#f7ddb4;background:var(--warn-soft)}.metric.danger{border-color:#ffc8c8;background:var(--danger-soft)}
+    .alerts{border:1px solid #ffcdcd;background:#fff6f6}.alerts ul{padding-left:18px;display:grid;gap:7px;color:#7d2626}
+    .filters{display:grid;grid-template-columns:1.1fr repeat(4,minmax(170px,1fr));gap:10px;align-items:end}
+    .field{display:grid;gap:6px}label{font-size:.82rem;color:var(--muted);font-weight:600}
+    input,select{width:100%;border:1px solid #d8e2f0;border-radius:10px;padding:10px 11px;font-size:.9rem;background:#fff;color:var(--text)}
+    .layout{display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start}
+    .table-wrap{overflow:auto}table{width:100%;border-collapse:separate;border-spacing:0;min-width:1250px}
+    th{position:sticky;top:0;z-index:1;background:#f6f9ff;color:#385277;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.04em;font-size:.75rem;padding:10px 8px;text-align:left}
+    td{border-bottom:1px solid #e8edf5;padding:10px 8px;vertical-align:top;font-size:.88rem}tr:hover{background:#f8fbff}
+    .row-danger{background:#fff3f3;border-left:4px solid var(--danger)}.row-warn{background:#fffaf1;border-left:4px solid var(--warn)}
+    .pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 9px;font-size:.76rem;font-weight:700;white-space:nowrap}
+    .pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}.ok{color:var(--ok);background:var(--ok-soft)}.warn{color:var(--warn);background:var(--warn-soft)}.danger{color:var(--danger);background:var(--danger-soft)}
+    .mini{border:1px solid #d8e2f0;border-radius:8px;background:#f5f8ff;color:#1f3c68;font-size:.76rem;font-weight:600;padding:6px 8px;cursor:pointer}
+    .mini.warn{background:#fff8ec;color:#8a5100;border-color:#f8ddb0}.mini.danger{background:#fff0f0;color:var(--danger);border-color:#ffc9c9}
+    .stack{display:grid;gap:12px}.problem-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .problem-list li{background:var(--danger-soft);border:1px solid #ffcece;border-left:5px solid var(--danger);border-radius:10px;padding:10px}.problem-list b{display:block;margin-bottom:3px}
+    @media (max-width:1200px){.summary{grid-template-columns:repeat(3,minmax(170px,1fr))}.filters{grid-template-columns:repeat(2,minmax(180px,1fr))}.layout{grid-template-columns:1fr}}
+    @media (max-width:760px){.container{padding:14px}.summary,.filters{grid-template-columns:1fr}.actions{width:100%}.btn{flex:1}.quick-actions{display:grid;grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
+  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 6 / 11 — Медосмотры и сроки</span>
+  <a href="5-document-registry-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← Пред.</a>
+  <a href="7-training-knowledge-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
+</nav>
+  <main class="container">
+    <header class="card header">
+      <div>
+        <h1>Медосмотры и сроки</h1>
+        <p class="subtitle">Контроль действующих медосмотров и блокировок допуска</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" type="button">Назад к объекту</button>
+        <button class="btn btn-secondary" type="button">Добавить медосмотр</button>
+        <button class="btn btn-primary" type="button">Выгрузить список</button>
+        <button class="btn btn-secondary" type="button" id="toggle-problems">Только проблемные</button>
+      </div>
+    </header>
+
+    <section class="card summary">
+      <article class="metric"><span>Всего сотрудников</span><span class="value" id="total-count">26</span></article>
+      <article class="metric ok"><span>Медосмотр действителен</span><span class="value" id="valid-count">20</span></article>
+      <article class="metric warn"><span>Истекает в 30 дней</span><span class="value" id="expiring-count">3</span></article>
+      <article class="metric danger"><span>Просрочено</span><span class="value" id="expired-count">2</span></article>
+      <article class="metric danger"><span>Нет медосмотра</span><span class="value" id="missing-count">1</span></article>
+    </section>
+
+    <section class="card alerts">
+      <h2 style="font-size:1.02rem;margin-bottom:10px;">⚠️ Что сейчас блокирует допуск</h2>
+      <ul>
+        <li>У 1 сотрудника медосмотр отсутствует</li>
+        <li>У 2 сотрудников срок медосмотра истёк</li>
+        <li>У 3 сотрудников срок истекает в ближайшие 30 дней</li>
+        <li>Эти сотрудники не могут быть допущены или требуют срочного обновления документов</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 style="font-size:1.02rem;margin-bottom:10px;">Фильтры</h2>
+      <div class="filters">
+        <div class="field"><label for="search">Поиск по ФИО</label><input id="search" type="search" placeholder="Введите ФИО" /></div>
+        <div class="field"><label for="type-filter">Тип</label><select id="type-filter"><option value="Все">Все</option><option>ИТР</option><option>Рабочий</option></select></div>
+        <div class="field"><label for="status-filter">Статус</label><select id="status-filter"><option value="Все">Все</option><option>Действует</option><option>Истекает</option><option>Просрочено</option><option>Нет медосмотра</option></select></div>
+        <div class="field"><label for="area-filter">Объект / участок</label><select id="area-filter"><option value="Все">Все</option><option>ЖК Южный квартал / Секция А</option><option>ЖК Южный квартал / Секция Б</option><option>ЖК Южный квартал / Секция В</option></select></div>
+        <div class="field"><label for="critical-filter">Критичность</label><select id="critical-filter"><option value="Все">Все</option><option>Блокирует допуск</option><option>Требует внимания</option><option>Не блокирует</option></select></div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <article class="card table-wrap">
+        <h2 style="font-size:1.02rem;margin-bottom:10px;">Контроль медосмотров по сотрудникам</h2>
+        <table>
+          <thead><tr><th>ФИО</th><th>Тип</th><th>Профессия / роль</th><th>Объект / участок</th><th>Дата медосмотра</th><th>Срок действия</th><th>Статус</th><th>До истечения</th><th>Критичность</th><th>Действия</th></tr></thead>
+          <tbody id="medical-body"></tbody>
+        </table>
+      </article>
+
+      <aside class="stack">
+        <article class="card">
+          <h3 style="font-size:1rem;margin-bottom:10px;">🚫 Кто блокирует выход на объект по медосмотрам</h3>
+          <ul class="problem-list" id="block-list"></ul>
+        </article>
+
+        <article class="card">
+          <h3 style="font-size:1rem;margin-bottom:10px;">⚡ Быстрые действия</h3>
+          <div class="quick-actions">
+            <button class="btn btn-secondary" type="button">Загрузить медосмотр</button>
+            <button class="btn btn-primary" type="button">Отметить прохождение</button>
+            <button class="btn btn-danger" type="button">Выгрузить проблемных</button>
+            <button class="btn btn-ghost" type="button">Открыть карточки сотрудников</button>
+          </div>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const staff = [
+      {fio:'Сидоров Роман Игоревич', type:'Рабочий', role:'Арматурщик', area:'ЖК Южный квартал / Секция Б', date:'—', expiry:'—', status:'Нет медосмотра', days:'—', critical:'Блокирует допуск'},
+      {fio:'Кузнецов Дмитрий Олегович', type:'Рабочий', role:'Плотник-бетонщик', area:'ЖК Южный квартал / Секция Б', date:'10.03.2025', expiry:'10.03.2026', status:'Просрочено', days:'-19 дней', critical:'Блокирует допуск'},
+      {fio:'Смирнов Павел Андреевич', type:'Рабочий', role:'Электромонтажник', area:'ЖК Южный квартал / Секция А', date:'01.03.2025', expiry:'01.03.2026', status:'Просрочено', days:'-28 дней', critical:'Блокирует допуск'},
+      {fio:'Орлов Николай Сергеевич', type:'ИТР', role:'Мастер участка', area:'ЖК Южный квартал / Секция Б', date:'02.05.2025', expiry:'05.04.2026', status:'Истекает', days:'7 дней', critical:'Требует внимания'},
+      {fio:'Иванов Сергей Петрович', type:'ИТР', role:'Производитель работ', area:'ЖК Южный квартал / Секция А', date:'15.04.2025', expiry:'20.04.2026', status:'Истекает', days:'22 дня', critical:'Требует внимания'},
+      {fio:'Петров Алексей Викторович', type:'ИТР', role:'Ответственный по ОТ', area:'ЖК Южный квартал / Секция А', date:'18.04.2025', expiry:'27.04.2026', status:'Истекает', days:'29 дней', critical:'Требует внимания'},
+      {fio:'Морозов Кирилл Олегович', type:'ИТР', role:'Инженер ПТО', area:'ЖК Южный квартал / Секция В', date:'11.04.2025', expiry:'11.04.2027', status:'Действует', days:'743 дня', critical:'Не блокирует'},
+      {fio:'Фёдоров Денис Михайлович', type:'Рабочий', role:'Сварщик', area:'ЖК Южный квартал / Секция В', date:'06.04.2025', expiry:'06.04.2027', status:'Действует', days:'738 дней', critical:'Не блокирует'},
+      {fio:'Егоров Артём Валерьевич', type:'Рабочий', role:'Бетонщик', area:'ЖК Южный квартал / Секция Б', date:'12.04.2025', expiry:'12.04.2027', status:'Действует', days:'744 дня', critical:'Не блокирует'},
+      {fio:'Васильев Игорь Аркадьевич', type:'Рабочий', role:'Монтажник', area:'ЖК Южный квартал / Секция А', date:'22.04.2025', expiry:'22.04.2027', status:'Действует', days:'754 дня', critical:'Не блокирует'},
+      {fio:'Громов Алексей Сергеевич', type:'Рабочий', role:'Слесарь', area:'ЖК Южный квартал / Секция В', date:'09.04.2025', expiry:'09.04.2027', status:'Действует', days:'741 дня', critical:'Не блокирует'},
+      {fio:'Воронов Евгений Павлович', type:'Рабочий', role:'Такелажник', area:'ЖК Южный квартал / Секция А', date:'14.04.2025', expiry:'14.04.2027', status:'Действует', days:'746 дней', critical:'Не блокирует'}
+    ];
+
+    const state = { search:'', type:'Все', status:'Все', area:'Все', critical:'Все', onlyProblem:false };
+    const tbody = document.getElementById('medical-body');
+    const blockList = document.getElementById('block-list');
+
+    function statusClass(status){ if(status==='Действует') return 'ok'; if(status==='Истекает') return 'warn'; return 'danger'; }
+    function criticalClass(c){ if(c==='Не блокирует') return 'ok'; if(c==='Требует внимания') return 'warn'; return 'danger'; }
+    function isProblem(s){ return s.critical!=='Не блокирует' || s.status!=='Действует'; }
+    function rowClass(s){ if(['Просрочено','Нет медосмотра'].includes(s.status) || s.critical==='Блокирует допуск') return 'row-danger'; if(s.status==='Истекает' || s.critical==='Требует внимания') return 'row-warn'; return ''; }
+
+    function filtered(){
+      return staff.filter((s)=>{
+        const bySearch = s.fio.toLowerCase().includes(state.search.toLowerCase());
+        const byType = state.type==='Все' || s.type===state.type;
+        const byStatus = state.status==='Все' || s.status===state.status;
+        const byArea = state.area==='Все' || s.area===state.area;
+        const byCritical = state.critical==='Все' || s.critical===state.critical;
+        const byProblems = !state.onlyProblem || isProblem(s);
+        return bySearch && byType && byStatus && byArea && byCritical && byProblems;
+      });
+    }
+
+    function render(){
+      tbody.innerHTML='';
+      const data = filtered();
+      data.forEach((s)=>{
+        const tr = document.createElement('tr');
+        tr.className = rowClass(s);
+        const needActions = isProblem(s);
+        tr.innerHTML = `
+          <td><strong>${s.fio}</strong></td>
+          <td>${s.type}</td>
+          <td>${s.role}</td>
+          <td>${s.area}</td>
+          <td>${s.date}</td>
+          <td>${s.expiry}</td>
+          <td><span class="pill ${statusClass(s.status)}">${s.status}</span></td>
+          <td>${s.days}</td>
+          <td><span class="pill ${criticalClass(s.critical)}">${s.critical}</span></td>
+          <td><div class="row-actions"><button class="mini" type="button">Открыть карточку</button>${needActions?'<button class="mini warn" type="button">Загрузить медосмотр</button><button class="mini danger" type="button">Проверить</button>':''}</div></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      renderBlocks();
+    }
+
+    function renderBlocks(){
+      const top = staff.filter((s)=>s.critical==='Блокирует допуск').slice(0,3);
+      blockList.innerHTML = top.map((s)=>`<li><b>${s.fio}</b><span>${s.status} · ${s.role}</span></li>`).join('');
+    }
+
+    document.getElementById('search').addEventListener('input',(e)=>{state.search=e.target.value;render();});
+    document.getElementById('type-filter').addEventListener('change',(e)=>{state.type=e.target.value;render();});
+    document.getElementById('status-filter').addEventListener('change',(e)=>{state.status=e.target.value;render();});
+    document.getElementById('area-filter').addEventListener('change',(e)=>{state.area=e.target.value;render();});
+    document.getElementById('critical-filter').addEventListener('change',(e)=>{state.critical=e.target.value;render();});
+    document.getElementById('toggle-problems').addEventListener('click',(e)=>{state.onlyProblem=!state.onlyProblem;e.target.textContent=state.onlyProblem?'Показать всех':'Только проблемные';e.target.classList.toggle('btn-primary',state.onlyProblem);e.target.classList.toggle('btn-secondary',!state.onlyProblem);render();});
+
+    render();
+  </script>
+</body>
+</html>

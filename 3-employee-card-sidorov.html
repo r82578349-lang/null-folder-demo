@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — Карточка сотрудника</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --danger: #c62828;
+      --danger-soft: #ffeded;
+      --shadow: 0 10px 24px rgba(21, 35, 59, 0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(21,35,59,.11);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: linear-gradient(125deg, #15233b, #1f3c68);
+      color: #fff;
+      border: none;
+    }
+
+    h1,h2,h3,p,ul { margin: 0; }
+
+    .subtitle {
+      color: #c9d8ff;
+      margin-top: 6px;
+      font-size: .95rem;
+    }
+
+    .actions, .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .14s ease, opacity .14s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); opacity: .95; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: #edf2ff; color: #163172; }
+    .btn-ghost { background: #fff; color: #163172; }
+    .btn-danger { background: #b71c1c; color: #fff; }
+
+    .status-hero {
+      border: 2px solid #e14646;
+      background: linear-gradient(130deg, #fff7f7, #ffecec);
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .status-title {
+      display: grid;
+      gap: 6px;
+    }
+
+    .status-title h2 { font-size: 1.28rem; }
+
+    .badge {
+      width: fit-content;
+      font-size: .75rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 5px 9px;
+      letter-spacing: .02em;
+    }
+
+    .badge-danger {
+      color: #8a1111;
+      background: #ffe1e1;
+      border: 1px solid #ffbcbc;
+    }
+
+    .status-detail {
+      border: 1px solid #ffcaca;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .status-detail small { color: #7a2424; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .employee-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px,1fr));
+      gap: 10px 12px;
+    }
+
+    .field {
+      padding: 10px 11px;
+      border-radius: 10px;
+      border: 1px solid #e7edf7;
+      background: #f8fafd;
+    }
+
+    .label { font-size: .8rem; color: var(--muted); display: block; margin-bottom: 3px; }
+
+    .route {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+      position: relative;
+    }
+
+    .route::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: #dce5f5;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #e7edf7;
+      background: #fff;
+      position: relative;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 5px;
+      z-index: 1;
+    }
+
+    .ok-dot { background: var(--ok); }
+    .warn-dot { background: var(--warn); }
+    .danger-dot { background: var(--danger); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: .78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .ok { color: var(--ok); background: var(--ok-soft); }
+    .warn { color: var(--warn); background: var(--warn-soft); }
+    .danger { color: var(--danger); background: var(--danger-soft); }
+
+    .docs table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+
+    .docs th,
+    .docs td {
+      border-bottom: 1px solid #e7edf7;
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .docs th {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #3b5478;
+      background: #f6f9ff;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .blockers ul,
+    .history ul {
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .blockers {
+      border: 1px solid #ffcece;
+      background: #fff7f7;
+    }
+
+    .history li { color: #2c4264; }
+
+    @media (max-width: 1080px) {
+      .status-hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .container { padding: 14px; }
+      .employee-grid { grid-template-columns: 1fr; }
+      .actions { width: 100%; }
+      .btn { flex: 1; }
+      .docs table { min-width: 760px; }
+      .docs { overflow: auto; }
+    }
+  </style>
+</head>
+<body>
+<nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
+  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 3 / 11 — Карточка сотрудника</span>
+  <a href="2-employees-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← Пред.</a>
+  <a href="4-responsible-orders-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
+</nav>
+  <main class="container">
+    <header class="card header">
+      <div>
+        <h1>Карточка сотрудника</h1>
+        <p class="subtitle">Контроль допуска, обучения и обязательных документов</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" type="button">Назад к списку</button>
+        <button class="btn btn-secondary" type="button">Редактировать</button>
+        <button class="btn btn-primary" type="button">Проверить документы</button>
+      </div>
+    </header>
+
+    <section class="card status-hero">
+      <div class="status-title">
+        <span class="badge badge-danger">⚠️ Допуск запрещён</span>
+        <h2>Сотрудник не может быть допущен к самостоятельной работе</h2>
+        <p><strong>Причина:</strong> Нет медосмотра</p>
+      </div>
+      <div class="status-detail">
+        <small>Дополнительно</small>
+        <strong>Не завершена стажировка</strong>
+        <span>Требуется закрытие стажировки и подтверждение руководителя.</span>
+      </div>
+      <div class="status-detail">
+        <small>Последнее обновление</small>
+        <strong>Сегодня, 09:40</strong>
+        <span>Проверка выполнена специалистом по ОТ.</span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2 style="font-size:1.05rem;margin-bottom:12px;">Основные данные сотрудника</h2>
+        <div class="employee-grid">
+          <div class="field"><span class="label">ФИО</span><strong>Сидоров Роман Игоревич</strong></div>
+          <div class="field"><span class="label">Тип</span><strong>Рабочий</strong></div>
+          <div class="field"><span class="label">Профессия</span><strong>Арматурщик</strong></div>
+          <div class="field"><span class="label">Объект</span><strong>ЖК Южный квартал</strong></div>
+          <div class="field"><span class="label">Участок</span><strong>Секция Б, захватка 2</strong></div>
+          <div class="field"><span class="label">Вид работ</span><strong>Армирование вертикальных конструкций</strong></div>
+          <div class="field"><span class="label">Работа повышенной опасности</span><span class="pill danger">Да</span></div>
+          <div class="field"><span class="label">Требуются СИЗ</span><span class="pill warn">Да</span></div>
+          <div class="field"><span class="label">Требуется стажировка</span><span class="pill warn">Да</span></div>
+          <div class="field"><span class="label">Ответственный руководитель</span><strong>Иванов Сергей Петрович</strong></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2 style="font-size:1.05rem;margin-bottom:12px;">Маршрут допуска</h2>
+        <ul class="route" id="route"></ul>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card docs">
+        <h2 style="font-size:1.05rem;margin-bottom:10px;">Документы</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Документ</th>
+              <th>Статус</th>
+              <th>Дата</th>
+              <th>Срок действия</th>
+              <th>Комментарий</th>
+            </tr>
+          </thead>
+          <tbody id="docs-body"></tbody>
+        </table>
+      </article>
+
+      <div class="stack">
+        <article class="card blockers">
+          <h3 style="font-size:1rem;margin-bottom:10px;">🚫 Что мешает допуску</h3>
+          <ul>
+            <li>Нет действующего медосмотра.</li>
+            <li>Стажировка не завершена.</li>
+            <li>Не оформлен итоговый допуск.</li>
+          </ul>
+        </article>
+
+        <article class="card history">
+          <h3 style="font-size:1rem;margin-bottom:10px;">🕒 История действий</h3>
+          <ul>
+            <li>10.04.2026 — проведён вводный инструктаж</li>
+            <li>10.04.2026 — проведён первичный инструктаж</li>
+            <li>11.04.2026 — пройдено обучение по программам Б и В</li>
+            <li>11.04.2026 — оформлен протокол проверки знаний</li>
+            <li>12.04.2026 — стажировка начата</li>
+            <li>13.04.2026 — выявлено отсутствие медосмотра</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3 style="font-size:1rem;margin-bottom:10px;">⚡ Быстрые действия</h3>
+          <div class="inline-actions">
+            <button class="btn btn-danger" type="button">Загрузить медосмотр</button>
+            <button class="btn btn-secondary" type="button">Завершить стажировку</button>
+            <button class="btn btn-primary" type="button">Сформировать допуск</button>
+            <button class="btn btn-ghost" type="button">Скачать карточку</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const routeSteps = [
+      { title: 'Вводный инструктаж', status: 'Пройден', type: 'ok' },
+      { title: 'Первичный инструктаж', status: 'Пройден', type: 'ok' },
+      { title: 'Обучение программа Б', status: 'Пройдено', type: 'ok' },
+      { title: 'Обучение программа В', status: 'Пройдено', type: 'ok' },
+      { title: 'Первая помощь', status: 'Пройдено', type: 'ok' },
+      { title: 'Обучение по СИЗ', status: 'Пройдено', type: 'ok' },
+      { title: 'Проверка знаний', status: 'Пройдена', type: 'ok' },
+      { title: 'Стажировка', status: 'В процессе', type: 'warn' },
+      { title: 'Допуск к самостоятельной работе', status: 'Заблокирован', type: 'danger' }
+    ];
+
+    const docs = [
+      { name: 'Медосмотр', status: 'Нет / блокирует допуск', type: 'danger', date: '—', valid: '—', note: 'Требуется срочная загрузка заключения' },
+      { name: 'Удостоверение по высоте', status: 'Есть / действует', type: 'ok', date: '05.03.2026', valid: 'до 05.03.2027', note: 'Нарушений нет' },
+      { name: 'Электробезопасность', status: 'Не требуется', type: 'warn', date: '—', valid: '—', note: 'Для данной роли не применяется' },
+      { name: 'Протокол проверки знаний', status: 'Есть', type: 'ok', date: '11.04.2026', valid: 'до 11.04.2027', note: 'Оформлен корректно' },
+      { name: 'Обучение по СИЗ', status: 'Есть', type: 'ok', date: '11.04.2026', valid: 'до 11.04.2027', note: 'Подтверждено' },
+      { name: 'Первая помощь', status: 'Есть', type: 'ok', date: '11.04.2026', valid: 'до 11.04.2027', note: 'Подтверждено' }
+    ];
+
+    const routeEl = document.getElementById('route');
+    const docsBody = document.getElementById('docs-body');
+
+    routeSteps.forEach((step) => {
+      const li = document.createElement('li');
+      li.className = 'step';
+      const safeTitle = step.title.replace(/интруктаж/gi, 'инструктаж');
+      li.innerHTML = `
+        <span class="dot ${step.type}-dot"></span>
+        <span>${safeTitle}</span>
+        <span class="pill ${step.type}">${step.status}</span>
+      `;
+      routeEl.appendChild(li);
+    });
+
+    docs.forEach((doc) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${doc.name}</strong></td>
+        <td><span class="pill ${doc.type}">${doc.status}</span></td>
+        <td>${doc.date}</td>
+        <td>${doc.valid}</td>
+        <td>${doc.note}</td>
+      `;
+      docsBody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>

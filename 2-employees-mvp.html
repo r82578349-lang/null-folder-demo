@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — Сотрудники объекта</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --danger: #c62828;
+      --danger-soft: #ffeded;
+      --shadow: 0 10px 24px rgba(21, 35, 59, 0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(21,35,59,.12);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: linear-gradient(125deg, #15233b, #1f3c68);
+      color: #fff;
+      border: none;
+    }
+
+    h1,h2,h3,p { margin: 0; }
+
+    .subtitle {
+      color: #c9d8ff;
+      margin-top: 6px;
+      font-size: .95rem;
+      max-width: 780px;
+    }
+
+    .actions, .row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .14s ease, opacity .14s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); opacity: .95; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: #edf2ff; color: #163172; }
+    .btn-ghost { background: #fff; color: #163172; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px,1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 12px;
+      background: #fff;
+      display: grid;
+      gap: 6px;
+    }
+
+    .metric .value { font-size: 1.5rem; font-weight: 700; }
+    .metric.ok { border-color: #cdeedc; background: var(--ok-soft); }
+    .metric.warn { border-color: #f7ddb4; background: var(--warn-soft); }
+    .metric.danger { border-color: #ffc8c8; background: var(--danger-soft); }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(3, minmax(180px, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field { display: grid; gap: 6px; }
+
+    label {
+      font-size: .82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid #d8e2f0;
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: .92rem;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .table-wrap { overflow: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 980px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f6f9ff;
+      color: #385277;
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 10px;
+      text-align: left;
+    }
+
+    tbody td {
+      border-bottom: 1px solid #e8edf5;
+      padding: 11px 10px;
+      vertical-align: top;
+      font-size: .9rem;
+    }
+
+    tbody tr { transition: background .15s ease; }
+    tbody tr:hover { background: #f8fbff; }
+
+    .row-problem {
+      background: #fff4f4;
+      border-left: 4px solid var(--danger);
+    }
+
+    .row-partial {
+      background: #fffbf3;
+      border-left: 4px solid var(--warn);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: .78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .ok { color: var(--ok); background: var(--ok-soft); }
+    .warn { color: var(--warn); background: var(--warn-soft); }
+    .danger { color: var(--danger); background: var(--danger-soft); }
+
+    .problem-note {
+      display: inline-block;
+      font-size: .8rem;
+      color: #8a1111;
+      background: #ffe9e9;
+      border: 1px solid #ffcccc;
+      border-radius: 8px;
+      padding: 4px 7px;
+    }
+
+    .mini {
+      border: 1px solid #d8e2f0;
+      border-radius: 8px;
+      background: #f5f8ff;
+      color: #1f3c68;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: 6px 9px;
+      cursor: pointer;
+    }
+
+    .mini.warn {
+      background: #fff8ec;
+      color: #8a5100;
+      border-color: #f8ddb0;
+    }
+
+    .blocking-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .blocking-list li {
+      border: 1px solid #ffcece;
+      border-left: 5px solid var(--danger);
+      border-radius: 10px;
+      background: var(--danger-soft);
+      padding: 10px;
+    }
+
+    .name { font-weight: 700; display: block; margin-bottom: 4px; }
+    .reason { color: #7a2424; font-size: .86rem; }
+
+    @media (max-width: 1120px) {
+      .summary { grid-template-columns: repeat(2, minmax(160px,1fr)); }
+      .filters { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .container { padding: 14px; }
+      .summary, .filters { grid-template-columns: 1fr; }
+      .actions { width: 100%; }
+      .btn { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+<nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
+  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 2 / 11 — Сотрудники объекта</span>
+  <a href="1-zero-folder-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← Пред.</a>
+  <a href="3-employee-card-sidorov.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
+</nav>
+  <main class="container">
+    <header class="card header">
+      <div>
+        <h1>Сотрудники объекта</h1>
+        <p class="subtitle">Контроль допусков, документов и готовности к выходу на площадку</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" type="button">Добавить сотрудника</button>
+        <button class="btn btn-secondary" type="button">Выгрузить список</button>
+        <button class="btn btn-ghost" type="button" id="toggle-problems">Только проблемные</button>
+      </div>
+    </header>
+
+    <section class="card summary">
+      <article class="metric">
+        <span>Всего сотрудников</span>
+        <span class="value" id="total-count">26</span>
+      </article>
+      <article class="metric ok">
+        <span>Допущено</span>
+        <span class="value" id="allowed-count">23</span>
+      </article>
+      <article class="metric danger">
+        <span>Без допуска</span>
+        <span class="value" id="blocked-count">3</span>
+      </article>
+      <article class="metric warn">
+        <span>Требуют проверки</span>
+        <span class="value" id="review-count">5</span>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2 style="font-size:1.02rem;margin-bottom:10px;">Фильтры</h2>
+      <div class="filters">
+        <div class="field">
+          <label for="search">Поиск по ФИО</label>
+          <input id="search" type="search" placeholder="Введите ФИО" />
+        </div>
+        <div class="field">
+          <label for="type-filter">Тип</label>
+          <select id="type-filter">
+            <option value="Все">Все</option>
+            <option value="ИТР">ИТР</option>
+            <option value="Рабочий">Рабочие</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status-filter">Статус допуска</label>
+          <select id="status-filter">
+            <option value="Все">Все</option>
+            <option value="Допущен">Допущен</option>
+            <option value="В процессе">В процессе</option>
+            <option value="Допуск запрещён">Допуск запрещён</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="problem-filter">Проблемы</label>
+          <select id="problem-filter">
+            <option value="Все">Все</option>
+            <option value="Нет медосмотра">Нет медосмотра</option>
+            <option value="Нет обучения">Нет обучения</option>
+            <option value="Нет удостоверения">Нет удостоверения</option>
+            <option value="Просрочка">Просрочка</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <article class="card table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ФИО</th>
+              <th>Тип</th>
+              <th>Профессия / роль</th>
+              <th>Медосмотр</th>
+              <th>Обучение</th>
+              <th>Документы</th>
+              <th>Статус допуска</th>
+              <th>Проблемы</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody id="employees-body"></tbody>
+        </table>
+      </article>
+
+      <aside class="card">
+        <h3 style="font-size:1rem;margin-bottom:10px;">🚫 Кто сейчас блокирует выход на объект</h3>
+        <ul class="blocking-list" id="blocking-list"></ul>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const employees = [
+      {
+        fio: 'Иванов Сергей Петрович',
+        type: 'ИТР',
+        role: 'Производитель работ',
+        medical: 'Ок',
+        training: 'Ок',
+        docs: 'Полный комплект',
+        admission: 'Допущен',
+        issues: ''
+      },
+      {
+        fio: 'Петров Алексей Викторович',
+        type: 'ИТР',
+        role: 'Ответственный по ОТ',
+        medical: 'Ок',
+        training: 'Ок',
+        docs: 'Полный комплект',
+        admission: 'Допущен',
+        issues: ''
+      },
+      {
+        fio: 'Сидоров Роман Игоревич',
+        type: 'Рабочий',
+        role: 'Арматурщик',
+        medical: 'Нет',
+        training: 'Ок',
+        docs: 'Частично',
+        admission: 'Допуск запрещён',
+        issues: 'Нет медосмотра'
+      },
+      {
+        fio: 'Кузнецов Дмитрий Олегович',
+        type: 'Рабочий',
+        role: 'Плотник-бетонщик',
+        medical: 'Ок',
+        training: 'В процессе',
+        docs: 'Частично',
+        admission: 'В процессе',
+        issues: 'Не завершена стажировка'
+      },
+      {
+        fio: 'Смирнов Павел Андреевич',
+        type: 'Рабочий',
+        role: 'Электромонтажник',
+        medical: 'Ок',
+        training: 'Ок',
+        docs: 'Просрочка',
+        admission: 'Допуск запрещён',
+        issues: 'Просрочено удостоверение'
+      },
+      {
+        fio: 'Орлов Николай Сергеевич',
+        type: 'ИТР',
+        role: 'Мастер участка',
+        medical: 'Ок',
+        training: 'В процессе',
+        docs: 'Частично',
+        admission: 'В процессе',
+        issues: 'Не пройдена проверка знаний'
+      },
+      {
+        fio: 'Фёдоров Денис Михайлович',
+        type: 'Рабочий',
+        role: 'Сварщик',
+        medical: 'Ок',
+        training: 'Ок',
+        docs: 'Полный комплект',
+        admission: 'Допущен',
+        issues: ''
+      },
+      {
+        fio: 'Васильев Игорь Аркадьевич',
+        type: 'Рабочий',
+        role: 'Монтажник',
+        medical: 'Ок',
+        training: 'Нет',
+        docs: 'Частично',
+        admission: 'Допуск запрещён',
+        issues: 'Нет обучения'
+      },
+      {
+        fio: 'Егоров Артём Валерьевич',
+        type: 'Рабочий',
+        role: 'Бетонщик',
+        medical: 'Ок',
+        training: 'Ок',
+        docs: 'Полный комплект',
+        admission: 'Допущен',
+        issues: ''
+      },
+      {
+        fio: 'Морозов Кирилл Олегович',
+        type: 'ИТР',
+        role: 'Инженер ПТО',
+        medical: 'Ок',
+        training: 'Ок',
+        docs: 'Полный комплект',
+        admission: 'Допущен',
+        issues: ''
+      }
+    ];
+
+    const state = {
+      search: '',
+      type: 'Все',
+      status: 'Все',
+      problem: 'Все',
+      onlyProblem: false
+    };
+
+    const tbody = document.getElementById('employees-body');
+    const blockingList = document.getElementById('blocking-list');
+
+    function getPillClass(value, kind) {
+      if (kind === 'admission') {
+        if (value === 'Допущен') return 'ok';
+        if (value === 'В процессе') return 'warn';
+        return 'danger';
+      }
+      if (value === 'Ок' || value === 'Полный комплект') return 'ok';
+      if (value === 'В процессе' || value === 'Частично') return 'warn';
+      return 'danger';
+    }
+
+    function rowClass(item) {
+      if (item.admission === 'Допуск запрещён') return 'row-problem';
+      if (item.admission === 'В процессе') return 'row-partial';
+      return '';
+    }
+
+    function createPill(value, kind = '') {
+      return `<span class="pill ${getPillClass(value, kind)}">${value}</span>`;
+    }
+
+    function filteredEmployees() {
+      return employees.filter((item) => {
+        const bySearch = item.fio.toLowerCase().includes(state.search.toLowerCase());
+        const byType = state.type === 'Все' || item.type === state.type;
+        const byStatus = state.status === 'Все' || item.admission === state.status;
+        const byProblem = state.problem === 'Все' || item.issues.includes(state.problem);
+        const byToggle = !state.onlyProblem || item.admission !== 'Допущен';
+        return bySearch && byType && byStatus && byProblem && byToggle;
+      });
+    }
+
+    function renderTable() {
+      const data = filteredEmployees();
+      tbody.innerHTML = '';
+
+      data.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.className = rowClass(item);
+        tr.innerHTML = `
+          <td><strong>${item.fio}</strong></td>
+          <td>${item.type}</td>
+          <td>${item.role}</td>
+          <td>${createPill(item.medical)}</td>
+          <td>${createPill(item.training)}</td>
+          <td>${createPill(item.docs)}</td>
+          <td>${createPill(item.admission, 'admission')}</td>
+          <td>${item.issues ? `<span class="problem-note">${item.issues}</span>` : '<span style="color:#607089">—</span>'}</td>
+          <td>
+            <div class="row-actions">
+              <button class="mini" type="button">Открыть карточку</button>
+              <button class="mini warn" type="button">Проверить документы</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      updateCounters(data);
+      renderBlocking(data);
+    }
+
+    function updateCounters(data) {
+      const total = data.length;
+      const allowed = data.filter((x) => x.admission === 'Допущен').length;
+      const blocked = data.filter((x) => x.admission === 'Допуск запрещён').length;
+      const review = data.filter((x) => x.admission === 'В процессе').length;
+
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('allowed-count').textContent = allowed;
+      document.getElementById('blocked-count').textContent = blocked;
+      document.getElementById('review-count').textContent = review;
+    }
+
+    function renderBlocking(data) {
+      const blocked = data
+        .filter((x) => x.admission === 'Допуск запрещён')
+        .slice(0, 3);
+
+      blockingList.innerHTML = blocked.length
+        ? blocked.map((x) => `
+            <li>
+              <span class="name">${x.fio}</span>
+              <span class="reason">${x.issues || 'Есть критичные замечания по пакету документов'}</span>
+            </li>
+          `).join('')
+        : '<li><span class="name">Нет блокирующих сотрудников</span><span class="reason">По текущим фильтрам критичных блокеров не найдено.</span></li>';
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      state.search = e.target.value;
+      renderTable();
+    });
+
+    document.getElementById('type-filter').addEventListener('change', (e) => {
+      state.type = e.target.value;
+      renderTable();
+    });
+
+    document.getElementById('status-filter').addEventListener('change', (e) => {
+      state.status = e.target.value;
+      renderTable();
+    });
+
+    document.getElementById('problem-filter').addEventListener('change', (e) => {
+      state.problem = e.target.value;
+      renderTable();
+    });
+
+    document.getElementById('toggle-problems').addEventListener('click', (e) => {
+      state.onlyProblem = !state.onlyProblem;
+      e.target.textContent = state.onlyProblem ? 'Показать всех' : 'Только проблемные';
+      e.target.classList.toggle('btn-primary', state.onlyProblem);
+      e.target.classList.toggle('btn-ghost', !state.onlyProblem);
+      renderTable();
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>

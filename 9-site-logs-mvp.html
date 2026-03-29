@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — Журналы объекта</title>
+  <style>
+    :root{--bg:#f3f5f9;--surface:#fff;--text:#15233b;--muted:#607089;--line:#dde3ec;--accent:#2d5bff;--ok:#1f9d57;--ok-soft:#e8f8ef;--warn:#d97706;--warn-soft:#fff6e8;--danger:#c62828;--danger-soft:#ffeded;--shadow:0 10px 24px rgba(21,35,59,.08);--radius:14px}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 100% 0,#eaf0ff 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
+    .container{max-width:1260px;margin:0 auto;padding:24px;display:grid;gap:14px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;transition:transform .16s ease,box-shadow .16s ease}.card:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(21,35,59,.11)}
+    .header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#fff;background:linear-gradient(125deg,#15233b,#1f3c68);border:none}h1,h2,h3,p,ul{margin:0}.subtitle{color:#c9d8ff;margin-top:6px;font-size:.95rem}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:10px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:grid;gap:6px}.metric .value{font-size:1.45rem;font-weight:700}.metric.ok{border-color:#cdeedc;background:var(--ok-soft)}.metric.warn{border-color:#f7ddb4;background:var(--warn-soft)}.metric.danger{border-color:#ffc8c8;background:var(--danger-soft)}
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+    .table-wrap{overflow:auto}table{width:100%;border-collapse:separate;border-spacing:0;min-width:1000px}
+    th{position:sticky;top:0;z-index:1;background:#f6f9ff;color:#385277;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.04em;font-size:.75rem;padding:10px 8px;text-align:left}
+    td{border-bottom:1px solid #e8edf5;padding:10px 8px;vertical-align:top;font-size:.88rem}tr:hover{background:#f8fbff}.row-danger{background:#fff3f3}.row-warn{background:#fffaf1}
+    .pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 9px;font-size:.75rem;font-weight:700;white-space:nowrap}.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}.ok{color:var(--ok);background:var(--ok-soft)}.warn{color:var(--warn);background:var(--warn-soft)}.danger{color:var(--danger);background:var(--danger-soft)}
+    .actions{display:flex;gap:6px;flex-wrap:wrap}.mini{border:1px solid #d8e2f0;border-radius:8px;background:#f5f8ff;color:#1f3c68;font-size:.74rem;font-weight:600;padding:6px 8px;cursor:pointer}.mini.warn{background:#fff8ec;color:#8a5100;border-color:#f8ddb0}.mini.danger{background:#fff0f0;color:var(--danger);border-color:#ffc9c9}
+    .blockers{border:1px solid #ffcdcd;background:#fff6f6}.blockers ul{padding-left:18px;display:grid;gap:7px;color:#7d2626}
+    @media (max-width:1040px){.summary{grid-template-columns:repeat(2,minmax(170px,1fr))}.layout{grid-template-columns:1fr}}
+    @media (max-width:720px){.container{padding:14px}.summary{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
+  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 9 / 11 — Журналы</span>
+  <a href="8-hazardous-works-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← Пред.</a>
+  <a href="10-ppr-tk-awareness-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
+</nav>
+  <main class="container">
+    <header class="card header">
+      <div>
+        <h1>Журналы объекта</h1>
+        <p class="subtitle">Обязательные журналы, статус ведения и наличие файлов</p>
+      </div>
+    </header>
+
+    <section class="card summary">
+      <article class="metric"><span>Всего обязательных журналов</span><span class="value">6</span></article>
+      <article class="metric ok"><span>Открыто</span><span class="value">5</span></article>
+      <article class="metric warn"><span>Требуют внимания</span><span class="value">2</span></article>
+      <article class="metric danger"><span>Отсутствует</span><span class="value">1</span></article>
+    </section>
+
+    <section class="layout">
+      <article class="card table-wrap">
+        <h2 style="font-size:1.02rem;margin-bottom:10px;">Контроль журналов</h2>
+        <table>
+          <thead><tr><th>Журнал</th><th>Статус</th><th>Ответственный</th><th>Дата открытия</th><th>Последняя запись</th><th>Файл / шаблон / образец</th><th>Действия</th></tr></thead>
+          <tbody id="logs-body"></tbody>
+        </table>
+      </article>
+
+      <aside class="card blockers">
+        <h3 style="font-size:1rem;margin-bottom:10px;">🚫 Что не хватает по журналам</h3>
+        <ul>
+          <li>Не открыт журнал 1 группы по электробезопасности.</li>
+          <li>В журнале наряд-допусков нет записи за последнюю неделю.</li>
+          <li>Отсутствует PDF-копия журнала осмотра лесов и подмостей.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const logs = [
+      {name:'Журнал инструктажа по ОТ', status:'Готов', owner:'Петров А.В.', open:'10.04.2026', last:'29.03.2026', file:'Файл + образец'},
+      {name:'Журнал инструктажа по ПБ', status:'Готов', owner:'Петров А.В.', open:'10.04.2026', last:'28.03.2026', file:'Файл + образец'},
+      {name:'Журнал эксплуатации огнетушителей', status:'Требует внимания', owner:'Смирнов П.А.', open:'12.04.2026', last:'20.03.2026', file:'Шаблон + образец'},
+      {name:'Журнал наряд-допусков', status:'Требует внимания', owner:'Орлов Н.С.', open:'11.04.2026', last:'18.03.2026', file:'Файл + образец'},
+      {name:'Журнал 1 группы по электробезопасности', status:'Отсутствует', owner:'—', open:'—', last:'—', file:'Только образец'},
+      {name:'Журнал осмотра лесов и подмостей', status:'Готов', owner:'Иванов С.П.', open:'13.04.2026', last:'27.03.2026', file:'Шаблон + образец'}
+    ];
+
+    const tbody = document.getElementById('logs-body');
+
+    function statusClass(status){ if(status==='Готов') return 'ok'; if(status==='Требует внимания') return 'warn'; return 'danger'; }
+
+    logs.forEach((item)=>{
+      const tr = document.createElement('tr');
+      tr.className = item.status==='Отсутствует' ? 'row-danger' : item.status==='Требует внимания' ? 'row-warn' : '';
+      tr.innerHTML = `
+        <td><strong>${item.name}</strong></td>
+        <td><span class="pill ${statusClass(item.status)}">${item.status}</span></td>
+        <td>${item.owner}</td>
+        <td>${item.open}</td>
+        <td>${item.last}</td>
+        <td>${item.file}</td>
+        <td>
+          <div class="actions">
+            <button class="mini" type="button">Открыть</button>
+            <button class="mini warn" type="button">Загрузить PDF</button>
+            <button class="mini danger" type="button">Посмотреть образец</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — Ответственные и приказы</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --danger: #c62828;
+      --danger-soft: #ffeded;
+      --shadow: 0 10px 24px rgba(21, 35, 59, 0.08);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      line-height: 1.4;
+    }
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(21,35,59,.12); }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: #fff;
+      background: linear-gradient(125deg, #15233b, #1f3c68);
+      border: none;
+    }
+    h1,h2,h3,p,ul { margin: 0; }
+    .subtitle { color: #c9d8ff; margin-top: 6px; font-size: .95rem; }
+    .actions,.row-actions,.quick-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .14s ease, opacity .14s ease;
+    }
+    .btn:hover { transform: translateY(-1px); opacity: .95; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: #edf2ff; color: #163172; }
+    .btn-ghost { background: #fff; color: #163172; }
+    .btn-danger { background: #b71c1c; color: #fff; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+      background: #fff;
+    }
+    .metric .value { font-size: 1.55rem; font-weight: 700; }
+    .metric.ok { border-color: #cdeedc; background: var(--ok-soft); }
+    .metric.warn { border-color: #f7ddb4; background: var(--warn-soft); }
+    .metric.danger { border-color: #ffc8c8; background: var(--danger-soft); }
+
+    .alerts {
+      border: 1px solid #ffcdcd;
+      background: #fff6f6;
+    }
+    .alerts ul { padding-left: 18px; display: grid; gap: 7px; color: #7d2626; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .table-wrap { overflow: auto; }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 1200px;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f6f9ff;
+      color: #385277;
+      border-bottom: 1px solid var(--line);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      font-size: .75rem;
+      padding: 10px 8px;
+      text-align: left;
+    }
+    td {
+      border-bottom: 1px solid #e8edf5;
+      padding: 10px 8px;
+      vertical-align: top;
+      font-size: .88rem;
+    }
+    tr:hover { background: #f8fbff; }
+    .row-danger { background: #fff3f3; border-left: 4px solid var(--danger); }
+    .row-warn { background: #fffaf1; border-left: 4px solid var(--warn); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: .76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .ok { color: var(--ok); background: var(--ok-soft); }
+    .warn { color: var(--warn); background: var(--warn-soft); }
+    .danger { color: var(--danger); background: var(--danger-soft); }
+
+    .mini {
+      border: 1px solid #d8e2f0;
+      border-radius: 8px;
+      background: #f5f8ff;
+      color: #1f3c68;
+      font-size: .76rem;
+      font-weight: 600;
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+    .mini.warn { background: #fff8ec; color: #8a5100; border-color: #f8ddb0; }
+    .mini.danger { background: #fff0f0; color: var(--danger); border-color: #ffc9c9; }
+
+    .stack { display: grid; gap: 12px; }
+    .problems-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .problems-list li {
+      background: var(--danger-soft);
+      border: 1px solid #ffcece;
+      border-left: 5px solid var(--danger);
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .problems-list b { display: block; margin-bottom: 3px; }
+
+    @media (max-width: 1160px) {
+      .summary { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .container { padding: 14px; }
+      .summary { grid-template-columns: 1fr; }
+      .actions { width: 100%; }
+      .btn { flex: 1; }
+      .quick-actions { display: grid; grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
+  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 4 / 11 — Ответственные и приказы</span>
+  <a href="3-employee-card-sidorov.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← Пред.</a>
+  <a href="5-document-registry-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
+</nav>
+  <main class="container">
+    <header class="card header">
+      <div>
+        <h1>Ответственные и приказы</h1>
+        <p class="subtitle">Контроль обязательных назначений и приказов по объекту</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" type="button">Назад к объекту</button>
+        <button class="btn btn-primary" type="button">Сформировать приказ</button>
+        <button class="btn btn-secondary" type="button">Выгрузить реестр</button>
+        <button class="btn btn-secondary" type="button" id="toggle-problems">Только проблемные</button>
+      </div>
+    </header>
+
+    <section class="card summary">
+      <article class="metric"><span>Обязательных назначений</span><span class="value">11</span></article>
+      <article class="metric ok"><span>Назначено</span><span class="value" id="assigned-count">9</span></article>
+      <article class="metric danger"><span>Не назначено</span><span class="value" id="not-assigned-count">2</span></article>
+      <article class="metric warn"><span>Приказов сформировано</span><span class="value" id="orders-count">8</span></article>
+    </section>
+
+    <section class="card alerts">
+      <h2 style="font-size:1.02rem;margin-bottom:10px;">⚠️ Что мешает комплектности</h2>
+      <ul>
+        <li>Не назначен ответственный за электрохозяйство</li>
+        <li>Не назначен ответственный за работы повышенной опасности</li>
+        <li>Не сформирован приказ по выдаче СИЗ</li>
+        <li>У ответственного за высоту не подтвержден комплект документов</li>
+      </ul>
+    </section>
+
+    <section class="layout">
+      <article class="card table-wrap">
+        <h2 style="font-size:1.02rem;margin-bottom:10px;">Обязательные назначения</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Вид ответственности</th>
+              <th>Назначенный сотрудник</th>
+              <th>Заместитель</th>
+              <th>Статус назначения</th>
+              <th>Статус приказа</th>
+              <th>Статус документов</th>
+              <th>Последнее обновление</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="responsibility-body"></tbody>
+        </table>
+      </article>
+
+      <aside class="stack">
+        <article class="card">
+          <h3 style="font-size:1rem;margin-bottom:10px;">🚫 Проблемные назначения</h3>
+          <ul class="problems-list" id="problem-items"></ul>
+        </article>
+
+        <article class="card">
+          <h3 style="font-size:1rem;margin-bottom:10px;">⚡ Быстрые действия</h3>
+          <div class="quick-actions">
+            <button class="btn btn-primary" type="button">Назначить ответственного</button>
+            <button class="btn btn-secondary" type="button">Добавить заместителя</button>
+            <button class="btn btn-danger" type="button">Сформировать все приказы</button>
+            <button class="btn btn-ghost" type="button">Открыть шаблоны приказов</button>
+          </div>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const rows = [
+      {
+        responsibility: 'Ответственный за СМР и охрану труда',
+        assigned: 'Иванов Сергей Петрович',
+        deputy: 'Орлов Николай Сергеевич',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Сегодня, 08:40'
+      },
+      {
+        responsibility: 'Ответственный за пожарную безопасность',
+        assigned: 'Петров Алексей Викторович',
+        deputy: 'Смирнов Павел Андреевич',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Сегодня, 08:55'
+      },
+      {
+        responsibility: 'Ответственный за работу на высоте',
+        assigned: 'Морозов Кирилл Олегович',
+        deputy: 'Фёдоров Денис Михайлович',
+        assignmentStatus: 'Требует проверки',
+        orderStatus: 'Требует обновления',
+        docsStatus: 'Не хватает',
+        updated: 'Вчера, 17:20'
+      },
+      {
+        responsibility: 'Ответственный за погрузочно-разгрузочные работы',
+        assigned: 'Орлов Николай Сергеевич',
+        deputy: 'Кузнецов Дмитрий Олегович',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Вчера, 14:10'
+      },
+      {
+        responsibility: 'Ответственный за электрохозяйство',
+        assigned: '—',
+        deputy: '—',
+        assignmentStatus: 'Не назначен',
+        orderStatus: 'Не сформирован',
+        docsStatus: 'Не требуется',
+        updated: '2 дня назад'
+      },
+      {
+        responsibility: 'Ответственный за проведение инструктажей и стажировки по охране труда',
+        assigned: 'Петров Алексей Викторович',
+        deputy: 'Сидоров Роман Игоревич',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Сегодня, 09:05'
+      },
+      {
+        responsibility: 'Ответственный за проведение инструктажей и стажировки по пожарной безопасности',
+        assigned: 'Смирнов Павел Андреевич',
+        deputy: 'Егоров Артём Валерьевич',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Сегодня, 08:35'
+      },
+      {
+        responsibility: 'Ответственный за работы повышенной опасности',
+        assigned: '—',
+        deputy: '—',
+        assignmentStatus: 'Не назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Не требуется',
+        updated: 'Сегодня, 09:12'
+      },
+      {
+        responsibility: 'Ответственный за экологическую безопасность',
+        assigned: 'Васильев Игорь Аркадьевич',
+        deputy: 'Козлов Андрей Николаевич',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Вчера, 16:44'
+      },
+      {
+        responsibility: 'Ответственный за выдачу СИЗ',
+        assigned: 'Кузнецов митрий Олегович',
+        deputy: 'Воронов Евгений Павлович',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Не сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Сегодня, 09:00'
+      },
+      {
+        responsibility: 'Ответственный за исправное состояние инструментов и приспособлений',
+        assigned: 'Громов Алексей Сергеевич',
+        deputy: 'Мельников Артём Ильич',
+        assignmentStatus: 'Назначен',
+        orderStatus: 'Сформирован',
+        docsStatus: 'Подтверждено',
+        updated: 'Вчера, 18:02'
+      }
+    ];
+
+    const state = { onlyProblem: false };
+
+    const tbody = document.getElementById('responsibility-body');
+    const problemItems = document.getElementById('problem-items');
+
+    function toClass(status) {
+      if (status === 'Назначен' || status === 'Сформирован' || status === 'Подтверждено' || status === 'Не требуется') return 'ok';
+      if (status === 'Требует проверки' || status === 'Требует обновления') return 'warn';
+      return 'danger';
+    }
+
+    function isProblem(row) {
+      return row.assignmentStatus !== 'Назначен' || row.orderStatus !== 'Сформирован' || !['Подтверждено', 'Не требуется'].includes(row.docsStatus);
+    }
+
+    function rowClass(row) {
+      if (row.assignmentStatus === 'Не назначен' || row.orderStatus === 'Не сформирован' || row.docsStatus === 'Не хватает' || row.docsStatus === 'Просрочено') return 'row-danger';
+      if (row.assignmentStatus === 'Требует проверки' || row.orderStatus === 'Требует обновления') return 'row-warn';
+      return '';
+    }
+
+    function renderTable() {
+      tbody.innerHTML = '';
+      const visible = state.onlyProblem ? rows.filter(isProblem) : rows;
+
+      visible.forEach((row) => {
+        const tr = document.createElement('tr');
+        tr.className = rowClass(row);
+
+        const needActions = isProblem(row);
+
+        tr.innerHTML = `
+          <td><strong>${row.responsibility}</strong></td>
+          <td>${row.assigned}</td>
+          <td>${row.deputy}</td>
+          <td><span class="pill ${toClass(row.assignmentStatus)}">${row.assignmentStatus}</span></td>
+          <td><span class="pill ${toClass(row.orderStatus)}">${row.orderStatus}</span></td>
+          <td><span class="pill ${toClass(row.docsStatus)}">${row.docsStatus}</span></td>
+          <td>${row.updated}</td>
+          <td>
+            <div class="row-actions">
+              <button class="mini" type="button">Открыть</button>
+              ${needActions ? '<button class="mini warn" type="button">Сформировать приказ</button><button class="mini danger" type="button">Проверить документы</button>' : ''}
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      const assigned = rows.filter((x) => x.assignmentStatus === 'Назначен').length;
+      const notAssigned = rows.filter((x) => x.assignmentStatus === 'Не назначен').length;
+      const orders = rows.filter((x) => x.orderStatus === 'Сформирован').length;
+
+      document.getElementById('assigned-count').textContent = assigned;
+      document.getElementById('not-assigned-count').textContent = notAssigned;
+      document.getElementById('orders-count').textContent = orders;
+
+      renderProblems();
+    }
+
+    function renderProblems() {
+      const topProblems = rows.filter(isProblem).slice(0, 3);
+      problemItems.innerHTML = topProblems.map((item) => `
+        <li>
+          <b>${item.responsibility}</b>
+          <span>${item.assignmentStatus}, ${item.orderStatus}, ${item.docsStatus}</span>
+        </li>
+      `).join('');
+    }
+
+    document.getElementById('toggle-problems').addEventListener('click', (e) => {
+      state.onlyProblem = !state.onlyProblem;
+      e.target.textContent = state.onlyProblem ? 'Показать все' : 'Только проблемные';
+      e.target.classList.toggle('btn-primary', state.onlyProblem);
+      e.target.classList.toggle('btn-secondary', !state.onlyProblem);
+      renderTable();
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>

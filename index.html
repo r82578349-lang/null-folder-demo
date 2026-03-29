@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — Демо MVP</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --progress: #3155a8;
+      --progress-soft: #edf2ff;
+      --shadow: 0 10px 24px rgba(21,35,59,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(6px);
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: #1e3d76;
+      font-size: .9rem;
+      font-weight: 600;
+      border: 1px solid #d8e2f0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #f6f9ff;
+    }
+
+    .hero {
+      background: linear-gradient(125deg, #15233b, #1f3c68);
+      color: #fff;
+      border: none;
+    }
+
+    .hero p { margin: 0; }
+
+    .hero-subtitle { color: #c9d8ff; margin-top: 8px; }
+
+    .hero-desc {
+      margin-top: 12px;
+      color: #e8f0ff;
+      max-width: 760px;
+    }
+
+    .actions {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: #edf2ff; color: #163172; }
+
+    .section-title { font-size: 1.1rem; margin-bottom: 10px; }
+
+    .check-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+      color: #29405f;
+    }
+
+    .screens-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(280px, 1fr));
+    }
+
+    .screen-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+      display: grid;
+      gap: 10px;
+    }
+
+    .screen-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .screen-num {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: .76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .ready { color: var(--ok); background: var(--ok-soft); }
+    .clarify { color: var(--warn); background: var(--warn-soft); }
+    .progress { color: var(--progress); background: var(--progress-soft); }
+
+    .file { font-size: .83rem; color: var(--muted); }
+
+    .footer {
+      text-align: center;
+      color: #4a5f7e;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 900px) {
+      .screens-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container" id="top">
+    <nav class="card top-nav">
+      <a class="nav-link" href="#top">Главная</a>
+      <a class="nav-link" href="#screens">Все экраны</a>
+      <a class="nav-link" href="#checks">Что проверяем</a>
+      <a class="nav-link" href="1-zero-folder-mvp.html">Открыть первый экран</a>
+    </nav>
+
+    <section class="card hero">
+      <h1>Нулевая Папка</h1>
+      <p class="hero-subtitle">Система допуска субподрядчика на объект</p>
+      <p class="hero-desc">
+        Мобилизация, охрана труда и обязательные документы — в одном месте.<br />
+        Демонстрационный концепт MVP для обсуждения с коллегами и последующей доработки.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="1-zero-folder-mvp.html">Открыть первый экран</a>
+        <a class="btn btn-secondary" href="#screens">Смотреть все экраны</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Что это за демо</h2>
+      <ul class="check-list">
+        <li>Это концепция MVP продукта «Нулевая Папка».</li>
+        <li>Экраны показывают ключевую логику системы допуска и комплектности.</li>
+        <li>После обсуждения с коллегами экраны будут уточняться и дополняться.</li>
+        <li>Цель — проверить понятность продукта и приоритеты разработки.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="checks">
+      <h2 class="section-title">Что хотим проверить на обсуждении</h2>
+      <ul class="check-list">
+        <li>Понятна ли общая логика продукта.</li>
+        <li>Хватает ли текущего набора экранов.</li>
+        <li>Что на экранах лишнее.</li>
+        <li>Каких данных и функций не хватает.</li>
+        <li>Какие экраны используются чаще всего.</li>
+        <li>Где будет основная ежедневная работа ПТО и ОТ.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="screens">
+      <h2 class="section-title">Экраны демо-концепта MVP</h2>
+      <div class="screens-grid" id="screens-grid"></div>
+    </section>
+
+    <footer class="card footer">
+      <p><strong>Демо-концепт MVP продукта «Нулевая Папка»</strong></p>
+      <p>Для обсуждения логики, структуры экранов и приоритетов разработки.</p>
+    </footer>
+  </main>
+
+  <script>
+    const screens = [
+      { id: 1, title: 'Нулевая папка объекта', file: '1-zero-folder-mvp.html', desc: 'Обзор объекта, статус комплектности, 9 блоков Нулевой папки, критические проблемы.', status: 'Готов к обсуждению', cls: 'ready' },
+      { id: 2, title: 'Сотрудники объекта', file: '2-employees-mvp.html', desc: 'Список сотрудников на объекте, статус допуска, проблемы и блокирующие выход на площадку.', status: 'Готов к обсуждению', cls: 'ready' },
+      { id: 3, title: 'Карточка сотрудника', file: '3-employee-card-sidorov.html', desc: 'Маршрут допуска сотрудника, документы, история, стоп-факторы и быстрые действия.', status: 'Готов к обсуждению', cls: 'ready' },
+      { id: 4, title: 'Ответственные и приказы', file: '4-responsible-orders-mvp.html', desc: 'Обязательные назначения, статусы приказов, комплектность и проблемные ответственные.', status: 'Готов к обсуждению', cls: 'ready' },
+      { id: 5, title: 'Реестр документов Нулевой папки', file: '5-document-registry-mvp.html', desc: 'Полный контроль документов НП, статусы, типы документов и критичность.', status: 'Готов к обсуждению', cls: 'ready' },
+      { id: 6, title: 'Медосмотры и сроки', file: '6-medical-expiry-mvp.html', desc: 'Контроль действующих медосмотров, истечений срока и блокировок допуска.', status: 'Готов к обсуждению', cls: 'ready' },
+      { id: 7, title: 'Обучение и проверка знаний', file: '7-training-knowledge-mvp.html', desc: 'Программы обучения, проверка знаний, стажировка и итог допуска.', status: 'В доработке', cls: 'progress' },
+      { id: 8, title: 'Работы повышенной опасности', file: '8-hazardous-works-mvp.html', desc: 'Перечень опасных работ, требования, наряды-допуски и связь с допуском сотрудников.', status: 'В доработке', cls: 'progress' },
+      { id: 9, title: 'Журналы', file: '9-site-logs-mvp.html', desc: 'Журналы ОТ, ПБ, огнетушителей, нарядов-допусков и других обязательных форм.', status: 'В доработке', cls: 'progress' },
+      { id: 10, title: 'ППР / ТК', file: '10-ppr-tk-awareness-mvp.html', desc: 'ППР, технологические карты, листы ознакомления и статус комплектности.', status: 'В доработке', cls: 'progress' },
+      { id: 11, title: 'Шаблоны документов', file: '11-document-templates-mvp.html', desc: 'Библиотека шаблонов приказов, списков, реестров и других документов.', status: 'В доработке', cls: 'progress' }
+    ];
+
+    const grid = document.getElementById('screens-grid');
+
+    screens.forEach((screen) => {
+      const card = document.createElement('article');
+      card.className = 'screen-card';
+      card.innerHTML = `
+        <div class="screen-head">
+          <div>
+            <div class="screen-num">Экран ${screen.id}</div>
+            <strong>${screen.title}</strong>
+          </div>
+          <span class="status ${screen.cls}">${screen.status}</span>
+        </div>
+        <div>${screen.desc}</div>
+        <div class="file">Файл: ${screen.file}</div>
+        <a class="btn btn-secondary" href="${screen.file}">Открыть экран</a>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

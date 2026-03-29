@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Нулевая Папка — MVP экран</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --danger: #c62828;
+      --danger-soft: #ffeded;
+      --shadow: 0 10px 24px rgba(21, 35, 59, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(21, 35, 59, 0.12);
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(125deg, #15233b, #1f3c68);
+      color: #fff;
+      border: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .subtitle {
+      color: #c9d8ff;
+      margin-top: 6px;
+      font-size: 0.96rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #edf2ff;
+      color: #163172;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .object-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(210px, 1fr));
+      gap: 10px 14px;
+    }
+
+    .field {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f8fafd;
+      border: 1px solid #e7edf7;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .status-summary {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(3, minmax(120px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .hero {
+      background: linear-gradient(130deg, #eef4ff, #f7faff);
+      border: 1px solid #dce8ff;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .hero .label {
+      margin-bottom: 8px;
+    }
+
+    .hero strong {
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .metric {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 12px;
+      display: grid;
+      gap: 5px;
+      align-content: center;
+      background: #fff;
+    }
+
+    .metric span:last-child {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .metric.ok { border-color: #cdeedc; background: var(--ok-soft); }
+    .metric.warn { border-color: #f7ddb4; background: var(--warn-soft); }
+    .metric.danger { border-color: #ffc8c8; background: var(--danger-soft); }
+
+    .alert-list {
+      display: grid;
+      gap: 9px;
+      padding-left: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .alert-item {
+      background: var(--danger-soft);
+      border: 1px solid #ffcece;
+      border-left: 5px solid var(--danger);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .blockers {
+      background: linear-gradient(130deg, #fff8eb, #fffef7);
+      border: 1px solid #ffe2b9;
+    }
+
+    .blockers ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #6b4a00;
+      display: grid;
+      gap: 6px;
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+    }
+
+    .doc-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      background: #fff;
+      min-height: 170px;
+      position: relative;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 26px rgba(21, 35, 59, 0.1);
+    }
+
+    .doc-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-ready {
+      color: var(--ok);
+      background: var(--ok-soft);
+    }
+
+    .status-partial {
+      color: var(--warn);
+      background: var(--warn-soft);
+    }
+
+    .status-problem {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .missing {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .comment {
+      font-size: 0.93rem;
+      color: #2a3f60;
+    }
+
+    .card-updated {
+      font-size: 0.78rem;
+      color: #6a7992;
+      margin-top: -2px;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mini-btn {
+      border: 1px solid #d8e2f0;
+      border-radius: 8px;
+      background: #f5f8ff;
+      color: #1f3c68;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+
+    .mini-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.92;
+    }
+
+    .mini-btn.danger {
+      background: #fff0f0;
+      color: var(--danger);
+      border-color: #ffc9c9;
+    }
+
+    .mini-btn.warn {
+      background: #fff8ec;
+      color: #8a5100;
+      border-color: #f8ddb0;
+    }
+
+    .badge {
+      width: fit-content;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 4px 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-danger {
+      color: #8a1111;
+      background: #ffe1e1;
+      border: 1px solid #ffbcbc;
+    }
+
+    .badge-warn {
+      color: #8a5100;
+      background: #fff3de;
+      border: 1px solid #ffdba3;
+    }
+
+    .doc-card.problem {
+      border: 2px solid #e14646;
+      background: linear-gradient(180deg, #fff 0%, #fff7f7 100%);
+    }
+
+    .doc-card.partial {
+      border-color: #f0c37b;
+      background: linear-gradient(180deg, #fff 0%, #fffbf3 100%);
+    }
+
+    .warning-icon {
+      color: var(--danger);
+      font-size: 0.9rem;
+    }
+
+    .aux-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .quick-actions {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(130px, 1fr));
+    }
+
+    .timeline {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline li {
+      border: 1px solid #e5ebf5;
+      border-radius: 10px;
+      background: #f8fbff;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1040px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+      .status-summary {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container { padding: 14px; }
+      .cards-grid,
+      .status-summary,
+      .object-grid,
+      .aux-grid,
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        align-items: flex-start;
+      }
+      .actions {
+        width: 100%;
+      }
+      .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
+  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 1 / 11 — Нулевая папка объекта</span>
+  <a href="2-employees-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
+</nav>
+  <main class="container">
+    <header class="card header">
+      <div>
+        <h1>Нулевая Папка</h1>
+        <p class="subtitle">Система допуска субподрядчика на объект</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" type="button">Сформировать пакет</button>
+        <button class="btn btn-secondary" type="button">Открыть сотрудников</button>
+        <button class="btn btn-secondary" type="button">Открыть приказы</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2 class="section-title">🏗️ Нулевая папка объекта</h2>
+      <div class="object-grid">
+        <div class="field"><span class="label">Объект</span><strong>ЖК Южный квартал</strong></div>
+        <div class="field"><span class="label">Адрес</span><strong>Москва, ул. Примерная, 12</strong></div>
+        <div class="field"><span class="label">Статус объекта</span><strong>Мобилизация</strong></div>
+        <div class="field"><span class="label">Дата начала работ</span><strong>18.04.2026</strong></div>
+        <div class="field"><span class="label">Генподрядчик</span><strong>ООО “СтройГен”</strong></div>
+        <div class="field"><span class="label">Подрядчик</span><strong>ООО “МонолитСтрой”</strong></div>
+        <div class="field"><span class="label">Ответственный ПТО</span><strong>Иванов И.И.</strong></div>
+        <div class="field"><span class="label">Ответственный по ОТ</span><strong>Петров П.П.</strong></div>
+        <div class="field"><span class="label">Сотрудников на объекте</span><strong>26</strong></div>
+        <div class="field"><span class="label">Допущено</span><strong>23</strong></div>
+        <div class="field"><span class="label">Без допуска</span><strong>3</strong></div>
+        <div class="field"><span class="label">Плановая дата передачи</span><strong>15.04.2026</strong></div>
+      </div>
+    </section>
+
+    <section class="card status-summary">
+      <div class="hero">
+        <span class="label">Статус нулевой папки</span>
+        <strong>Собрано частично</strong>
+        <span>Текущая готовность стартового пакета для допуска на объект</span>
+      </div>
+      <div class="metric ok"><span>Готовность</span><span>68%</span></div>
+      <div class="metric warn"><span>Критичных позиций</span><span>5</span></div>
+      <div class="metric danger"><span>Без допуска</span><span>3</span></div>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title">⚠️ Критические предупреждения</h3>
+      <ul class="alert-list">
+        <li class="alert-item">Нет медосмотров у 2 сотрудников</li>
+        <li class="alert-item">Не загружен ППР на бетонные работы</li>
+        <li class="alert-item">Не назначен ответственный за электрохозяйство</li>
+        <li class="alert-item">Просрочено удостоверение по высоте у 1 ИТР</li>
+      </ul>
+    </section>
+
+    <section class="card blockers">
+      <h3 class="section-title">🚫 Что мешает допуску на объект</h3>
+      <ul>
+        <li>Неполный пакет по медосмотрам не позволяет оформить допуск сотрудников на площадку.</li>
+        <li>Отсутствие ППР по бетонным работам блокирует старт ключевого этапа работ.</li>
+        <li>Нет приказа о назначении ответственного за электрохозяйство — риск остановки проверкой ОТ.</li>
+      </ul>
+    </section>
+
+    <section class="aux-grid">
+      <article class="card">
+        <h3 class="section-title">⚡ Быстрые действия</h3>
+        <div class="quick-actions">
+          <button class="btn btn-secondary" type="button">Добавить сотрудника</button>
+          <button class="btn btn-secondary" type="button">Назначить ответственного</button>
+          <button class="btn btn-secondary" type="button">Загрузить документ</button>
+          <button class="btn btn-primary" type="button">Открыть реестр НП</button>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="section-title">🕒 Последние изменения</h3>
+        <ul class="timeline">
+          <li>Загружен список работников</li>
+          <li>Обновлены журналы по ОТ</li>
+          <li>Добавлен приказ по пожарной безопасности</li>
+          <li>Обнаружена просрочка по высоте у ИТР</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title">📁 Контроль блоков нулевой папки</h3>
+      <div class="cards-grid" id="cards-grid"></div>
+    </section>
+  </main>
+
+  <script>
+    const sections = [
+      { title: 'Список работников', status: 'Готов', missing: 0, comment: 'Список сформирован', updated: 'сегодня' },
+      { title: 'Приказы', status: 'Частично', missing: 2, comment: 'Не назначены 2 ответственных', updated: 'вчера' },
+      { title: 'Документы ИТР', status: 'Частично', missing: 3, comment: 'Не хватает удостоверений по высоте и электробезопасности', updated: 'сегодня' },
+      { title: 'Документы рабочих', status: 'Частично', missing: 4, comment: 'У части рабочих нет полного комплекта допусков', updated: '2 дня назад' },
+      { title: 'Журналы', status: 'Готов', missing: 0, comment: 'Все обязательные журналы заведены', updated: 'вчера' },
+      { title: 'Инструкции', status: 'Готов', missing: 0, comment: 'Инструкции по профессиям загружены', updated: 'сегодня' },
+      { title: 'Работы повышенной опасности', status: 'Частично', missing: 1, comment: 'Не утверждён перечень работ', updated: 'вчера' },
+      { title: 'Медосмотры', status: 'Проблема', missing: 2, comment: 'Есть сотрудники без действующего медосмотра', updated: 'сегодня' },
+      { title: 'ППР / ТК', status: 'Проблема', missing: 1, comment: 'ППР не загружен', updated: '2 дня назад' }
+    ];
+
+    const statusClassMap = {
+      'Готов': 'status-ready',
+      'Частично': 'status-partial',
+      'Проблема': 'status-problem'
+    };
+
+    const grid = document.getElementById('cards-grid');
+
+    sections.forEach((item) => {
+      const card = document.createElement('article');
+      const problem = item.status === 'Проблема';
+      const partial = item.status === 'Частично';
+      card.className = `doc-card ${problem ? 'problem' : ''} ${partial ? 'partial' : ''}`.trim();
+      const badge = problem
+        ? '<span class="badge badge-danger">Блокирует допуск</span>'
+        : partial
+          ? '<span class="badge badge-warn">Нужно проверить</span>'
+          : '';
+      const issueButton = item.status !== 'Готов'
+        ? `<button class="mini-btn ${problem ? 'danger' : 'warn'}" type="button">Проблемы</button>`
+        : '';
+      const warningIcon = problem ? '<span class="warning-icon">⚠️</span>' : '';
+      card.innerHTML = `
+        <div class="doc-title">${warningIcon} ${item.title}</div>
+        ${badge}
+        <span class="status-pill ${statusClassMap[item.status] || 'status-partial'}">${item.status}</span>
+        <div class="missing">Не хватает: <strong>${item.missing}</strong></div>
+        <div class="comment">${item.comment}</div>
+        <div class="card-updated">Последнее обновление: ${item.updated}</div>
+        <div class="card-actions">
+          <button class="mini-btn" type="button">Открыть</button>
+          ${issueButton}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>
