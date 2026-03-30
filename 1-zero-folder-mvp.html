@@ -515,15 +515,16 @@
 
   <script>
     const sections = [
-      { title: 'Список работников', status: 'Готов', missing: 0, comment: 'Список сформирован', updated: 'сегодня' },
-      { title: 'Приказы', status: 'Частично', missing: 2, comment: 'Не назначены 2 ответственных', updated: 'вчера' },
-      { title: 'Документы ИТР', status: 'Частично', missing: 3, comment: 'Не хватает удостоверений по высоте и электробезопасности', updated: 'сегодня' },
-      { title: 'Документы рабочих', status: 'Частично', missing: 4, comment: 'У части рабочих нет полного комплекта допусков', updated: '2 дня назад' },
-      { title: 'Журналы', status: 'Готов', missing: 0, comment: 'Все обязательные журналы заведены', updated: 'вчера' },
-      { title: 'Инструкции', status: 'Готов', missing: 0, comment: 'Инструкции по профессиям загружены', updated: 'сегодня' },
-      { title: 'Работы повышенной опасности', status: 'Частично', missing: 1, comment: 'Не утверждён перечень работ', updated: 'вчера' },
-      { title: 'Медосмотры', status: 'Проблема', missing: 2, comment: 'Есть сотрудники без действующего медосмотра', updated: 'сегодня' },
-      { title: 'ППР / ТК', status: 'Проблема', missing: 1, comment: 'ППР не загружен', updated: '2 дня назад' }
+      { title: 'Сотрудники объекта',             status: 'Готов',    missing: 0, comment: 'Список сформирован, 26 чел., 23 допущено',                         updated: 'сегодня',    link: '2-employees-mvp.html' },
+      { title: 'Карточка сотрудника',             status: 'Готов',    missing: 0, comment: 'Маршрут допуска, документы и стоп-факторы по каждому',             updated: 'сегодня',    link: '3-employee-card-sidorov.html' },
+      { title: 'Ответственные и приказы',         status: 'Частично', missing: 2, comment: 'Не назначены 2 ответственных',                                     updated: 'вчера',      link: '4-responsible-orders-mvp.html' },
+      { title: 'Реестр документов Нулевой папки', status: 'Частично', missing: 3, comment: 'Не хватает удостоверений по высоте и электробезопасности',          updated: 'сегодня',    link: '5-document-registry-mvp.html' },
+      { title: 'Медосмотры и сроки',              status: 'Проблема', missing: 2, comment: 'Есть сотрудники без действующего медосмотра',                       updated: 'сегодня',    link: '6-medical-expiry-mvp.html' },
+      { title: 'Обучение и проверка знаний',      status: 'Частично', missing: 4, comment: 'У части рабочих нет полного комплекта допусков по обучению',        updated: '2 дня назад', link: '7-training-knowledge-mvp.html' },
+      { title: 'Работы повышенной опасности',     status: 'Частично', missing: 1, comment: 'Не утверждён перечень работ',                                       updated: 'вчера',      link: '8-hazardous-works-mvp.html' },
+      { title: 'Журналы',                         status: 'Готов',    missing: 0, comment: 'Все обязательные журналы заведены',                                 updated: 'вчера',      link: '9-site-logs-mvp.html' },
+      { title: 'ППР / ТК',                        status: 'Проблема', missing: 1, comment: 'ППР на бетонные работы не загружен',                                updated: '2 дня назад', link: '10-ppr-tk-awareness-mvp.html' },
+      { title: 'Шаблоны документов',              status: 'Готов',    missing: 0, comment: 'Инструкции и шаблоны по профессиям загружены',                      updated: 'сегодня',    link: '11-document-templates-mvp.html' }
     ];
 
     const statusClassMap = {
@@ -556,7 +557,7 @@
         <div class="comment">${item.comment}</div>
         <div class="card-updated">Последнее обновление: ${item.updated}</div>
         <div class="card-actions">
-          <button class="mini-btn" type="button">Открыть</button>
+          <a class="mini-btn" href="${item.link}">Открыть</a>
           ${issueButton}
         </div>
       `;
