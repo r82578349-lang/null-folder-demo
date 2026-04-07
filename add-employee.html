@@ -235,9 +235,6 @@
           <label>Объект</label>
           <select id="objectId" name="objectId">
             <option value="">Не назначен</option>
-            <option value="1">ЖК Северный</option>
-            <option value="2">ТЦ Южный</option>
-            <option value="3">Офисный центр Восток</option>
           </select>
           <div class="hint">Можно назначить позже</div>
         </div>
@@ -295,8 +292,25 @@
     </div>
   </div>
 
+  <script src="js/objects.js"></script>
   <script src="js/employees.js"></script>
   <script>
+    // Заполняем список объектов из LocalStorage
+    (function() {
+      const select = document.getElementById('objectId');
+      const objects = ObjectsManager.getAll();
+      objects.forEach(function(obj) {
+        const option = document.createElement('option');
+        option.value = obj.id;
+        option.textContent = obj.objectName;
+        select.appendChild(option);
+      });
+      // Предвыбираем объект если пришли с ?objectId=...
+      const params = new URLSearchParams(window.location.search);
+      const preselect = params.get('objectId');
+      if (preselect) select.value = preselect;
+    })();
+
     // Показываем/скрываем раздел патента в зависимости от гражданства
     const citizenshipSelect = document.getElementById('citizenship');
     const patentSection = document.getElementById('patentSection');
