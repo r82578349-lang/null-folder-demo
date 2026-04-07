@@ -435,7 +435,7 @@
         <button class="btn btn-primary" type="button">Сформировать пакет</button>
         <button class="btn btn-secondary" type="button" id="openEmployeesBtn">Открыть сотрудников</button>
         <button class="btn btn-secondary" type="button">Открыть приказы</button>
-        <button class="btn btn-secondary" type="button" onclick="window.location.href='add-responsible.html'">✏️ Редактировать объект</button>
+        <button class="btn btn-secondary" type="button" id="editObjectBtn">✏️ Редактировать объект</button>
       </div>
     </header>
 
@@ -603,10 +603,18 @@
       }
 
       // Обновляем кнопку "Редактировать объект"
-      const editButton = document.querySelector('.actions .btn-secondary[onclick*="add-object"]');
+      const editButton = document.getElementById('editObjectBtn');
       if (editButton && data.id) {
         editButton.onclick = function() {
           window.location.href = `add-object.html?id=${data.id}`;
+        };
+      }
+
+      // Обновляем кнопку "Назначить ответственного"
+      const assignBtn = document.querySelector('.quick-actions .btn-secondary[onclick*="add-responsible"]');
+      if (assignBtn && data.id) {
+        assignBtn.onclick = function() {
+          window.location.href = `add-responsible.html?objectId=${data.id}`;
         };
       }
 
