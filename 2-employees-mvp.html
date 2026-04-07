@@ -140,9 +140,8 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 1fr 310px;
+      grid-template-columns: 1fr;
       gap: 14px;
-      align-items: start;
     }
 
     .table-wrap { overflow: auto; }
@@ -242,7 +241,8 @@
       margin: 0;
       padding: 0;
       display: grid;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
     }
 
     .blocking-list li {
@@ -259,7 +259,6 @@
     @media (max-width: 1120px) {
       .summary { grid-template-columns: repeat(2, minmax(160px,1fr)); }
       .filters { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
-      .layout { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 720px) {
@@ -284,8 +283,9 @@
         <p class="subtitle">Контроль допусков, документов и готовности к выходу на площадку</p>
       </div>
       <div class="actions">
-        <button class="btn btn-primary" type="button">Добавить сотрудника</button>
-        <button class="btn btn-secondary" type="button">Выгрузить список</button>
+        <button class="btn btn-primary" type="button" onclick="window.location.href='add-employee.html'">➕ Добавить сотрудника</button>
+        <button class="btn btn-primary" type="button" onclick="window.location.href='upload-employees.html'">📁 Загрузить из Excel</button>
+        <button class="btn btn-secondary" type="button" onclick="EmployeesManager.exportToCSV()">💾 Экспорт в Excel</button>
         <button class="btn btn-ghost" type="button" id="toggle-problems">Только проблемные</button>
       </div>
     </header>
@@ -366,15 +366,30 @@
         </table>
       </article>
 
-      <aside class="card">
-        <h3 style="font-size:1rem;margin-bottom:10px;">🚫 Кто сейчас блокирует выход на объект</h3>
+      <article class="card">
+        <h3 style="font-size:1rem;margin-bottom:12px;">🚫 Кто сейчас блокирует выход на объект</h3>
         <ul class="blocking-list" id="blocking-list"></ul>
-      </aside>
+      </article>
     </section>
   </main>
 
+  <script src="js/employees.js"></script>
   <script>
-    const employees = [
+    // Получаем objectId из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentObjectId = urlParams.get('objectId');
+
+    // Загружаем сотрудников из LocalStorage
+    let allEmployees = EmployeesManager.getAll();
+
+    // Фильтруем по objectId если указан
+    let employees = currentObjectId
+      ? allEmployees.filter(emp => emp.objectId === currentObjectId)
+      : allEmployees;
+
+    // Если нет данных, используем демо-данные
+    if (employees.length === 0 && !currentObjectId) {
+      employees = [
       {
         fio: 'Иванов Сергей Петрович',
         type: 'ИТР',
@@ -477,6 +492,31 @@
       }
     ];
 
+      // Сохраняем демо-данные если их еще нет
+      // (закомментируйте эту строку после первого запуска, если хотите работать с пустой базой)
+      // EmployeesManager.addBulk(employees.map(emp => ({
+      //   fullName: emp.fio,
+      //   position: emp.role,
+      //   citizenship: 'РФ',
+      //   status: emp.admission === 'Допущен' ? 'admitted' : 'not_admitted',
+      //   objectId: '1'
+      // })));
+    }
+
+    // Преобразуем данные из нашего формата в формат для отображения
+    const displayEmployees = employees.map(emp => ({
+      id: emp.id,
+      fio: emp.fullName || emp.fio || 'Не указано',
+      type: emp.type || 'Рабочий',
+      role: emp.position || 'Не указана',
+      medical: emp.medicalExam?.status === 'valid' ? 'Ок' : 'Нет',
+      training: emp.training?.programA?.completed ? 'Ок' : 'Нет',
+      docs: emp.status === 'admitted' ? 'Полный комплект' : 'Частично',
+      admission: emp.status === 'admitted' ? 'Допущен' :
+                 emp.status === 'in_progress' ? 'В процессе' : 'Допуск запрещён',
+      issues: emp.notes || ''
+    }));
+
     const state = {
       search: '',
       type: 'Все',
@@ -510,7 +550,7 @@
     }
 
     function filteredEmployees() {
-      return employees.filter((item) => {
+      return displayEmployees.filter((item) => {
         const bySearch = item.fio.toLowerCase().includes(state.search.toLowerCase());
         const byType = state.type === 'Все' || item.type === state.type;
         const byStatus = state.status === 'Все' || item.admission === state.status;
@@ -538,7 +578,7 @@
           <td>${item.issues ? `<span class="problem-note">${item.issues}</span>` : '<span style="color:#607089">—</span>'}</td>
           <td>
             <div class="row-actions">
-              <button class="mini" type="button">Открыть карточку</button>
+              <button class="mini" type="button" onclick="window.location.href='employee-card.html?id=${item.id}'">Открыть карточку</button>
               <button class="mini warn" type="button">Проверить документы</button>
             </div>
           </td>

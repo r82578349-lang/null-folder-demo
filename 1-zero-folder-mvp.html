@@ -421,7 +421,7 @@
 </head>
 <body>
 <nav id="screen-nav" style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid #dde3ec;padding:8px 16px;display:flex;gap:8px;align-items:center;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 2px 8px rgba(21,35,59,.06);">
-  <a href="index.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку</a>
+  <a href="objects-list.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">← К списку объектов</a>
   <span style="color:#607089;font-size:.82rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Экран 1 / 11 — Нулевая папка объекта</span>
   <a href="2-employees-mvp.html" style="text-decoration:none;color:#1e3d76;font-size:.82rem;font-weight:700;border:1px solid #d8e2f0;border-radius:999px;padding:5px 11px;background:#f6f9ff;white-space:nowrap;">След. →</a>
 </nav>
@@ -429,12 +429,13 @@
     <header class="card header">
       <div>
         <h1>Нулевая Папка</h1>
-        <p class="subtitle">Система допуска субподрядчика на объект</p>
+        <p class="subtitle">Документы для допуска: ОТ, ПБ, ЭБ и производство работ</p>
       </div>
       <div class="actions">
         <button class="btn btn-primary" type="button">Сформировать пакет</button>
-        <button class="btn btn-secondary" type="button">Открыть сотрудников</button>
+        <button class="btn btn-secondary" type="button" id="openEmployeesBtn">Открыть сотрудников</button>
         <button class="btn btn-secondary" type="button">Открыть приказы</button>
+        <button class="btn btn-secondary" type="button" onclick="window.location.href='add-responsible.html'">✏️ Редактировать объект</button>
       </div>
     </header>
 
@@ -452,7 +453,7 @@
         <div class="field"><span class="label">Сотрудников на объекте</span><strong>26</strong></div>
         <div class="field"><span class="label">Допущено</span><strong>23</strong></div>
         <div class="field"><span class="label">Без допуска</span><strong>3</strong></div>
-        <div class="field"><span class="label">Плановая дата передачи</span><strong>15.04.2026</strong></div>
+        <div class="field"><span class="label">Плановая дата завершения работ</span><strong id="plannedDate">—</strong></div>
       </div>
     </section>
 
@@ -490,8 +491,8 @@
       <article class="card">
         <h3 class="section-title">⚡ Быстрые действия</h3>
         <div class="quick-actions">
-          <button class="btn btn-secondary" type="button">Добавить сотрудника</button>
-          <button class="btn btn-secondary" type="button">Назначить ответственного</button>
+          <button class="btn btn-secondary" type="button" onclick="window.location.href='add-employee.html'">Добавить сотрудника</button>
+          <button class="btn btn-secondary" type="button" onclick="window.location.href='add-responsible.html'">Назначить ответственного</button>
           <button class="btn btn-secondary" type="button">Загрузить документ</button>
           <button class="btn btn-primary" type="button">Открыть реестр НП</button>
         </div>
@@ -512,6 +513,10 @@
       <div class="cards-grid" id="cards-grid"></div>
     </section>
   </main>
+
+  <script src="js/objects.js"></script>
+  <script src="js/employees.js"></script>
+  <script src="js/responsibles.js"></script>
 
   <script>
     const sections = [
@@ -562,6 +567,138 @@
         </div>
       `;
       grid.appendChild(card);
+    });
+  </script>
+
+  <script>
+    // Загрузка данных объекта из LocalStorage
+    window.addEventListener('DOMContentLoaded', function() {
+      // Получаем ID объекта из URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const objectId = urlParams.get('id');
+
+      let data = null;
+
+      if (objectId) {
+        // Загружаем объект по ID
+        data = ObjectsManager.getById(objectId);
+      } else {
+        // Миграция: пробуем загрузить старый объект
+        const oldObject = localStorage.getItem('nulevaya_papka_object');
+        if (oldObject) {
+          data = JSON.parse(oldObject);
+        } else {
+          // Берём первый объект из списка
+          const objects = ObjectsManager.getAll();
+          if (objects.length > 0) {
+            data = objects[0];
+          }
+        }
+      }
+
+      if (!data) {
+        alert('Объект не найден. Перенаправление к списку объектов.');
+        window.location.href = 'objects-list.html';
+        return;
+      }
+
+      // Обновляем кнопку "Редактировать объект"
+      const editButton = document.querySelector('.actions .btn-secondary[onclick*="add-object"]');
+      if (editButton && data.id) {
+        editButton.onclick = function() {
+          window.location.href = `add-object.html?id=${data.id}`;
+        };
+      }
+
+      // Обновляем кнопку "Открыть сотрудников"
+      const employeesBtn = document.getElementById('openEmployeesBtn');
+      if (employeesBtn && data.id) {
+        employeesBtn.onclick = function() {
+          window.location.href = `2-employees-mvp.html?objectId=${data.id}`;
+        };
+      }
+
+      // Обновляем поля объекта на странице
+      const fields = document.querySelectorAll('.object-grid .field');
+
+      // Объект
+      if (fields[0] && data.objectName) {
+        fields[0].querySelector('strong').textContent = data.objectName;
+      }
+
+      // Адрес
+      if (fields[1] && data.objectAddress) {
+        fields[1].querySelector('strong').textContent = data.objectAddress;
+      }
+
+      // Статус объекта
+      if (fields[2] && data.objectStatus) {
+        const statusMap = {
+          'preparation': 'Подготовка',
+          'active': 'Активный',
+          'suspended': 'Приостановлен',
+          'completed': 'Завершён'
+        };
+        fields[2].querySelector('strong').textContent = statusMap[data.objectStatus] || data.objectStatus;
+      }
+
+      // Дата начала работ
+      if (fields[3] && data.startDate) {
+        const date = new Date(data.startDate);
+        fields[3].querySelector('strong').textContent = date.toLocaleDateString('ru-RU');
+      }
+
+      // Генподрядчик
+      if (fields[4] && data.contractor) {
+        fields[4].querySelector('strong').textContent = data.contractor;
+      }
+
+      // Подрядчик (наша компания)
+      if (fields[5] && data.subcontractor) {
+        fields[5].querySelector('strong').textContent = data.subcontractor;
+      }
+
+      // Ответственный ПТО (поле 6)
+      const ptoResponsible = ResponsiblesManager.getByType('pto');
+      if (fields[6] && ptoResponsible) {
+        fields[6].querySelector('strong').textContent = ptoResponsible.fullName;
+      }
+
+      // Ответственный по ОТ (поле 7)
+      const otResponsible = ResponsiblesManager.getByType('ot');
+      if (fields[7] && otResponsible) {
+        fields[7].querySelector('strong').textContent = otResponsible.fullName;
+      }
+
+      // Статистика сотрудников (поля 8, 9, 10)
+      const allEmployees = EmployeesManager.getAll();
+      const objectEmployees = allEmployees.filter(emp => emp.objectId === data.id);
+      const admittedCount = objectEmployees.filter(emp => emp.status === 'admitted').length;
+      const notAdmittedCount = objectEmployees.filter(emp => emp.status !== 'admitted').length;
+
+      // Сотрудников на объекте (поле 8)
+      if (fields[8]) {
+        fields[8].querySelector('strong').textContent = objectEmployees.length;
+      }
+
+      // Допущено (поле 9)
+      if (fields[9]) {
+        fields[9].querySelector('strong').textContent = admittedCount;
+      }
+
+      // Без допуска (поле 10)
+      if (fields[10]) {
+        fields[10].querySelector('strong').textContent = notAdmittedCount;
+      }
+
+      // Плановая дата передачи (поле 11)
+      if (data.endDate) {
+        const plannedDateEl = document.getElementById('plannedDate');
+        if (plannedDateEl) {
+          const date = new Date(data.endDate);
+          plannedDateEl.textContent = date.toLocaleDateString('ru-RU');
+        }
+      }
     });
   </script>
 </body>

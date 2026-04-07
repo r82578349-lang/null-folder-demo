@@ -1,3 +1,9 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Internal docs
+_content/
+_instructions/
+templates/
+.claude/

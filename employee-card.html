@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карточка сотрудника — Нулевая Папка</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --danger: #c62828;
+      --danger-soft: #ffeded;
+      --shadow: 0 10px 24px rgba(21,35,59,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    h1 { margin: 0; font-size: 1.8rem; }
+    h2 { margin: 0 0 12px 0; font-size: 1.1rem; }
+    h3 { margin: 0 0 10px 0; font-size: 1rem; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .status-badge.ok { background: var(--ok-soft); color: var(--ok); }
+    .status-badge.danger { background: var(--danger-soft); color: var(--danger); }
+    .status-badge.warn { background: var(--warn-soft); color: var(--warn); }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: #edf2ff; color: #163172; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+
+    .error {
+      background: var(--danger-soft);
+      color: var(--danger);
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Карточка сотрудника</h1>
+      <a href="2-employees-mvp.html" class="back-link">← К списку сотрудников</a>
+    </div>
+
+    <div id="loading" class="loading">
+      Загрузка данных сотрудника...
+    </div>
+
+    <div id="error" class="error" style="display: none;">
+      Сотрудник не найден
+    </div>
+
+    <div id="content" style="display: none;">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+          <div>
+            <h1 id="employeeName">—</h1>
+            <p style="color: var(--muted); margin: 4px 0 0 0;" id="employeePosition">—</p>
+          </div>
+          <span class="status-badge ok" id="statusBadge">Допущен</span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Тип</span>
+            <span class="info-value" id="employeeType">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Гражданство</span>
+            <span class="info-value" id="employeeCitizenship">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Дата рождения</span>
+            <span class="info-value" id="employeeBirthDate">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Объект</span>
+            <span class="info-value" id="employeeObject">Не назначен</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="editEmployee()">Редактировать</button>
+          <button class="btn btn-secondary" onclick="window.location.href='2-employees-mvp.html'">Назад к списку</button>
+        </div>
+      </div>
+
+      <div class="card" id="patentSection" style="display: none;">
+        <h2>Патент / разрешение на работу</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Серия / Номер</span>
+            <span class="info-value" id="patentNumber">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Вид документа</span>
+            <span class="info-value" id="patentType">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Кем выдан</span>
+            <span class="info-value" id="patentIssuedBy">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Дата выдачи</span>
+            <span class="info-value" id="patentIssueDate">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Действителен до</span>
+            <span class="info-value" id="patentValidUntil">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="notesSection" style="display: none;">
+        <h2>Примечание</h2>
+        <p id="employeeNotes" style="margin: 0; color: var(--text);">—</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/employees.js"></script>
+  <script>
+    // Получаем ID из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const employeeId = urlParams.get('id');
+
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const content = document.getElementById('content');
+
+    if (!employeeId) {
+      loading.style.display = 'none';
+      error.style.display = 'block';
+      error.textContent = 'ID сотрудника не указан';
+    } else {
+      // Загружаем данные сотрудника
+      const employee = EmployeesManager.getById(employeeId);
+
+      if (!employee) {
+        loading.style.display = 'none';
+        error.style.display = 'block';
+      } else {
+        loading.style.display = 'none';
+        content.style.display = 'block';
+
+        // Заполняем данные
+        document.getElementById('employeeName').textContent = employee.fullName || 'Не указано';
+        document.getElementById('employeePosition').textContent = employee.position || 'Должность не указана';
+        document.getElementById('employeeType').textContent = employee.type || 'Рабочий';
+        document.getElementById('employeeCitizenship').textContent = employee.citizenship || 'РФ';
+        document.getElementById('employeeBirthDate').textContent = employee.birthDate || 'Не указана';
+
+        // Объект
+        const objectNames = {
+          '1': 'ЖК Северный',
+          '2': 'ТЦ Южный',
+          '3': 'Офисный центр Восток'
+        };
+        document.getElementById('employeeObject').textContent = employee.objectId ? objectNames[employee.objectId] || 'Объект #' + employee.objectId : 'Не назначен';
+
+        // Статус
+        const statusBadge = document.getElementById('statusBadge');
+        if (employee.status === 'admitted') {
+          statusBadge.textContent = 'Допущен';
+          statusBadge.className = 'status-badge ok';
+        } else if (employee.status === 'in_progress') {
+          statusBadge.textContent = 'В процессе';
+          statusBadge.className = 'status-badge warn';
+        } else {
+          statusBadge.textContent = 'Не допущен';
+          statusBadge.className = 'status-badge danger';
+        }
+
+        // Патент
+        if (employee.patent && employee.patent.number) {
+          document.getElementById('patentSection').style.display = 'block';
+          document.getElementById('patentNumber').textContent = employee.patent.number || '—';
+          document.getElementById('patentType').textContent = employee.patent.type || '—';
+          document.getElementById('patentIssuedBy').textContent = employee.patent.issuedBy || '—';
+          document.getElementById('patentIssueDate').textContent = employee.patent.issueDate || '—';
+          document.getElementById('patentValidUntil').textContent = employee.patent.validUntil || '—';
+        }
+
+        // Примечание
+        if (employee.notes) {
+          document.getElementById('notesSection').style.display = 'block';
+          document.getElementById('employeeNotes').textContent = employee.notes;
+        }
+      }
+    }
+
+    function editEmployee() {
+      alert('Функция редактирования будет добавлена позже');
+      // TODO: Создать страницу edit-employee.html
+    }
+  </script>
+</body>
+</html>

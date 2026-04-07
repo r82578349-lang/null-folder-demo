@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мои объекты — Нулевая Папка</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --shadow: 0 10px 24px rgba(21,35,59,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      background: linear-gradient(125deg, #15233b, #1f3c68);
+      color: #fff;
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      color: #c9d8ff;
+      margin-top: 6px;
+      font-size: 0.96rem;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #fff;
+      color: #15233b;
+    }
+
+    .btn-primary:hover {
+      background: #f0f4ff;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .empty-state h2 {
+      margin: 0 0 12px 0;
+      font-size: 1.5rem;
+    }
+
+    .empty-state p {
+      color: var(--muted);
+      margin: 0 0 24px 0;
+    }
+
+    .objects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .object-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .object-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px rgba(21,35,59,.12);
+    }
+
+    .object-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .object-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+    }
+
+    .object-address {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: var(--ok-soft);
+      color: var(--ok);
+    }
+
+    .status-preparation {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .object-info {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f8f9fb;
+      border-radius: 8px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .info-label {
+      color: var(--muted);
+    }
+
+    .info-value {
+      font-weight: 600;
+    }
+
+    .object-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 8px;
+      background: #f8f9fb;
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .object-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      flex: 1;
+    }
+
+    .btn-secondary {
+      background: #edf2ff;
+      color: #163172;
+    }
+
+    .btn-secondary:hover {
+      background: #dce5ff;
+    }
+
+    .btn-danger {
+      background: #ffeded;
+      color: #c62828;
+    }
+
+    .btn-danger:hover {
+      background: #ffd6d6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Мои объекты</h1>
+        <p class="subtitle">Система допуска субподрядчика на объект</p>
+      </div>
+      <a href="add-object.html" class="btn btn-primary">➕ Добавить объект</a>
+    </div>
+
+    <div id="objectsList"></div>
+  </div>
+
+  <script src="js/objects.js"></script>
+  <script src="js/employees.js"></script>
+  <script src="js/responsibles.js"></script>
+  <script>
+    // Миграция старых данных
+    ObjectsManager.migrateFromOldStructure();
+
+    // Загрузка и отображение объектов
+    function loadObjects() {
+      const objects = ObjectsManager.getAll();
+      const container = document.getElementById('objectsList');
+
+      if (objects.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h2>🏗️ Нет объектов</h2>
+            <p>Добавьте первый объект, чтобы начать работу</p>
+            <a href="add-object.html" class="btn btn-primary">➕ Добавить объект</a>
+          </div>
+        `;
+        return;
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'objects-grid';
+
+      objects.forEach(obj => {
+        const stats = ObjectsManager.getStats(obj.id);
+        const statusMap = {
+          'preparation': { label: 'Подготовка', class: 'status-preparation' },
+          'active': { label: 'Активный', class: 'status-active' },
+          'suspended': { label: 'Приостановлен', class: 'status-preparation' },
+          'completed': { label: 'Завершён', class: 'status-active' }
+        };
+        const status = statusMap[obj.objectStatus] || { label: obj.objectStatus, class: 'status-active' };
+
+        const card = document.createElement('div');
+        card.className = 'object-card';
+        card.innerHTML = `
+          <div class="object-header">
+            <div>
+              <h3 class="object-title">${obj.objectName || 'Без названия'}</h3>
+              <p class="object-address">${obj.objectAddress || 'Адрес не указан'}</p>
+            </div>
+            <span class="status-badge ${status.class}">${status.label}</span>
+          </div>
+
+          <div class="object-info">
+            <div class="info-row">
+              <span class="info-label">Генподрядчик:</span>
+              <span class="info-value">${obj.contractor || '—'}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Дата начала:</span>
+              <span class="info-value">${obj.startDate ? new Date(obj.startDate).toLocaleDateString('ru-RU') : '—'}</span>
+            </div>
+          </div>
+
+          <div class="object-stats">
+            <div class="stat">
+              <span class="stat-value">${stats.totalEmployees}</span>
+              <span class="stat-label">Сотрудников</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">${stats.admitted}</span>
+              <span class="stat-label">Допущено</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">${stats.notAdmitted}</span>
+              <span class="stat-label">Без допуска</span>
+            </div>
+          </div>
+
+          <div class="object-actions">
+            <button class="btn btn-primary btn-small" onclick="openObject('${obj.id}')">Открыть</button>
+            <button class="btn btn-secondary btn-small" onclick="editObject('${obj.id}')">Редактировать</button>
+            <button class="btn btn-danger btn-small" onclick="deleteObject('${obj.id}', '${obj.objectName}')">Удалить</button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      container.innerHTML = '';
+      container.appendChild(grid);
+    }
+
+    // Открыть объект
+    function openObject(id) {
+      window.location.href = `1-zero-folder-mvp.html?id=${id}`;
+    }
+
+    // Редактировать объект
+    function editObject(id) {
+      window.location.href = `add-object.html?id=${id}`;
+    }
+
+    // Удалить объект
+    function deleteObject(id, name) {
+      if (confirm(`Удалить объект "${name}"?\n\nВнимание: это также удалит всех сотрудников и ответственных, привязанных к этому объекту.`)) {
+        ObjectsManager.delete(id);
+        loadObjects();
+      }
+    }
+
+    // Загрузка при открытии страницы
+    window.addEventListener('DOMContentLoaded', loadObjects);
+  </script>
+</body>
+</html>

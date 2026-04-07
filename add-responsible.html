@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Назначить ответственного — Нулевая Папка</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --shadow: 0 10px 24px rgba(21,35,59,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    label .required {
+      color: #c62828;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #2347cc;
+    }
+
+    .btn-secondary {
+      background: #edf2ff;
+      color: #163172;
+      margin-left: 12px;
+    }
+
+    .btn-secondary:hover {
+      background: #dce5ff;
+    }
+
+    .help-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .info-box {
+      background: #eef4ff;
+      border: 1px solid #d0e2ff;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .info-box h3 {
+      margin: 0 0 8px 0;
+      font-size: 1rem;
+    }
+
+    .info-box p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .type-description {
+      background: #f8f9fb;
+      border-left: 3px solid var(--accent);
+      padding: 12px;
+      margin-top: 8px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: none;
+    }
+
+    .type-description.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Назначить ответственного</h1>
+      <a href="1-zero-folder-mvp.html" class="back-link">← К объекту</a>
+    </div>
+
+    <div class="info-box">
+      <h3>📋 Назначение ответственных лиц</h3>
+      <p>Для допуска на объект необходимо назначить ответственных лиц приказом. Минимально требуются: ответственный за производство работ (ПТО) и ответственный за охрану труда.</p>
+    </div>
+
+    <div class="card">
+      <form id="responsibleForm">
+
+        <div class="form-group">
+          <label>
+            Тип ответственности <span class="required">*</span>
+          </label>
+          <select id="responsibleType" name="responsibleType" required>
+            <option value="">Выберите тип</option>
+            <option value="pto">Ответственный за производство работ (ПТО)</option>
+            <option value="ot">Ответственный за охрану труда</option>
+            <option value="pb">Ответственный за пожарную безопасность</option>
+            <option value="eb">Ответственный за электробезопасность</option>
+            <option value="vysota">Ответственный за работы на высоте</option>
+            <option value="naryad">Ответственный за выдачу нарядов-допусков</option>
+            <option value="komendant">Комендант объекта</option>
+            <option value="instruktazh">Ответственный за проведение инструктажей</option>
+          </select>
+
+          <div id="typeDescription" class="type-description"></div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            ФИО ответственного <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            placeholder="Иванов Иван Иванович"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>
+            Должность <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="position"
+            name="position"
+            placeholder="Прораб / Инженер по ОТ / Мастер"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>
+              Номер приказа
+            </label>
+            <input
+              type="text"
+              id="orderNumber"
+              name="orderNumber"
+              placeholder="№5"
+            />
+            <div class="help-text">Будет заполнен при генерации приказа</div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              Дата приказа
+            </label>
+            <input
+              type="date"
+              id="orderDate"
+              name="orderDate"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            Примечания
+          </label>
+          <textarea
+            id="notes"
+            name="notes"
+            placeholder="Дополнительная информация"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Назначить ответственного</button>
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='1-zero-folder-mvp.html'">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/responsibles.js"></script>
+  <script>
+    // Описания типов ответственности
+    const typeDescriptions = {
+      pto: 'Руководит производством работ на объекте, отвечает за качество и сроки выполнения работ.',
+      ot: 'Организует работу по охране труда, проводит инструктажи, контролирует соблюдение требований ОТ.',
+      pb: 'Отвечает за соблюдение требований пожарной безопасности на объекте.',
+      eb: 'Отвечает за безопасную эксплуатацию электроустановок и электрооборудования.',
+      vysota: 'Организует и контролирует безопасное производство работ на высоте.',
+      naryad: 'Выдаёт наряды-допуски на производство работ повышенной опасности.',
+      komendant: 'Отвечает за порядок на объекте, контролирует доступ, ведёт учёт материалов.',
+      instruktazh: 'Проводит инструктажи по охране труда на рабочем месте.'
+    };
+
+    // Показ описания при выборе типа
+    document.getElementById('responsibleType').addEventListener('change', function() {
+      const type = this.value;
+      const descriptionEl = document.getElementById('typeDescription');
+
+      if (type && typeDescriptions[type]) {
+        descriptionEl.textContent = typeDescriptions[type];
+        descriptionEl.classList.add('visible');
+      } else {
+        descriptionEl.classList.remove('visible');
+      }
+    });
+
+    // Обработка формы
+    document.getElementById('responsibleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const type = document.getElementById('responsibleType').value;
+      const responsibleData = {
+        fullName: document.getElementById('fullName').value,
+        position: document.getElementById('position').value,
+        orderNumber: document.getElementById('orderNumber').value,
+        orderDate: document.getElementById('orderDate').value,
+        notes: document.getElementById('notes').value
+      };
+
+      // Сохраняем через ResponsiblesManager
+      ResponsiblesManager.assign(type, responsibleData);
+
+      alert('Ответственный успешно назначен!');
+      window.location.href = '1-zero-folder-mvp.html';
+    });
+
+    // Загрузка существующих данных при редактировании
+    window.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const editType = urlParams.get('type');
+
+      if (editType) {
+        const responsible = ResponsiblesManager.getByType(editType);
+
+        if (responsible) {
+          document.getElementById('responsibleType').value = editType;
+          document.getElementById('fullName').value = responsible.fullName || '';
+          document.getElementById('position').value = responsible.position || '';
+          document.getElementById('orderNumber').value = responsible.orderNumber || '';
+          document.getElementById('orderDate').value = responsible.orderDate || '';
+          document.getElementById('notes').value = responsible.notes || '';
+
+          // Показываем описание
+          const event = new Event('change');
+          document.getElementById('responsibleType').dispatchEvent(event);
+
+          // Меняем заголовок
+          document.querySelector('h1').textContent = 'Редактировать ответственного';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

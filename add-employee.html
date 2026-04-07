@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Добавить сотрудника — Нулевая Папка</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --shadow: 0 10px 24px rgba(21,35,59,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .required {
+      color: #d97706;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .patent-section {
+      background: #f8f9fb;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .patent-section.visible {
+      display: block;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #2347cc;
+    }
+
+    .btn-secondary {
+      background: #edf2ff;
+      color: #163172;
+    }
+
+    .btn-secondary:hover {
+      background: #dce5ff;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .success-message {
+      background: var(--ok-soft);
+      color: var(--ok);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.visible {
+      display: block;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Добавить сотрудника</h1>
+      <a href="2-employees-mvp.html" class="back-link">← К списку сотрудников</a>
+    </div>
+
+    <div class="success-message" id="successMessage">
+      ✓ Сотрудник успешно добавлен!
+    </div>
+
+    <div class="card">
+      <form id="employeeForm">
+        <div class="form-group">
+          <label>ФИО (полностью) <span class="required">*</span></label>
+          <input type="text" id="fullName" name="fullName" placeholder="Иванов Иван Иванович" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Тип <span class="required">*</span></label>
+            <select id="type" name="type" required>
+              <option value="Рабочий">Рабочий</option>
+              <option value="ИТР">ИТР (Инженерно-технический работник)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Должность (профессия) <span class="required">*</span></label>
+            <input type="text" id="position" name="position" placeholder="Монтажник, Сварщик, Прораб..." required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Гражданство <span class="required">*</span></label>
+            <select id="citizenship" name="citizenship" required>
+              <option value="РФ">Российская Федерация</option>
+              <option value="Беларусь">Беларусь</option>
+              <option value="Казахстан">Казахстан</option>
+              <option value="Узбекистан">Узбекистан</option>
+              <option value="Таджикистан">Таджикистан</option>
+              <option value="Киргизия">Киргизия</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Дата рождения <span class="required">*</span></label>
+            <input type="date" id="birthDate" name="birthDate" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Объект</label>
+          <select id="objectId" name="objectId">
+            <option value="">Не назначен</option>
+            <option value="1">ЖК Северный</option>
+            <option value="2">ТЦ Южный</option>
+            <option value="3">Офисный центр Восток</option>
+          </select>
+          <div class="hint">Можно назначить позже</div>
+        </div>
+
+        <!-- Раздел патента (показывается для иностранцев) -->
+        <div class="patent-section" id="patentSection">
+          <h3 style="margin-top: 0; font-size: 1.1rem;">Патент / разрешение на работу</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Серия / Номер</label>
+              <input type="text" id="patentNumber" name="patentNumber" placeholder="1234567890" />
+            </div>
+
+            <div class="form-group">
+              <label>Вид документа</label>
+              <select id="patentType" name="patentType">
+                <option value="">Не указан</option>
+                <option value="Патент">Патент</option>
+                <option value="Разрешение на работу">Разрешение на работу</option>
+                <option value="РВП">РВП</option>
+                <option value="ВНЖ">ВНЖ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Кем выдан</label>
+            <input type="text" id="patentIssuedBy" name="patentIssuedBy" placeholder="ГУВМ МВД России" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Дата выдачи</label>
+              <input type="date" id="patentIssueDate" name="patentIssueDate" />
+            </div>
+
+            <div class="form-group">
+              <label>Действителен до</label>
+              <input type="date" id="patentValidUntil" name="patentValidUntil" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Примечание</label>
+          <textarea id="notes" name="notes" placeholder="Дополнительная информация..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Сохранить сотрудника</button>
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='2-employees-mvp.html'">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/employees.js"></script>
+  <script>
+    // Показываем/скрываем раздел патента в зависимости от гражданства
+    const citizenshipSelect = document.getElementById('citizenship');
+    const patentSection = document.getElementById('patentSection');
+
+    citizenshipSelect.addEventListener('change', function() {
+      if (this.value !== 'РФ') {
+        patentSection.classList.add('visible');
+      } else {
+        patentSection.classList.remove('visible');
+      }
+    });
+
+    // Обработка формы
+    const form = document.getElementById('employeeForm');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Собираем данные формы
+      const formData = new FormData(form);
+      const employee = {
+        fullName: formData.get('fullName'),
+        type: formData.get('type'),
+        citizenship: formData.get('citizenship'),
+        birthDate: formData.get('birthDate'),
+        position: formData.get('position'),
+        objectId: formData.get('objectId') || null,
+        notes: formData.get('notes'),
+        status: 'not_admitted', // По умолчанию не допущен
+      };
+
+      // Добавляем патент если заполнен
+      const patentNumber = formData.get('patentNumber');
+      if (patentNumber) {
+        employee.patent = {
+          number: patentNumber,
+          type: formData.get('patentType'),
+          issuedBy: formData.get('patentIssuedBy'),
+          issueDate: formData.get('patentIssueDate'),
+          validUntil: formData.get('patentValidUntil')
+        };
+      }
+
+      // Сохраняем через EmployeesManager
+      try {
+        EmployeesManager.add(employee);
+
+        // Показываем сообщение об успехе
+        successMessage.classList.add('visible');
+        setTimeout(() => {
+          successMessage.classList.remove('visible');
+        }, 3000);
+
+        // Очищаем форму
+        form.reset();
+        patentSection.classList.remove('visible');
+
+        // Предлагаем перейти к списку
+        setTimeout(() => {
+          if (confirm('Сотрудник добавлен! Перейти к списку сотрудников?')) {
+            window.location.href = '2-employees-mvp.html';
+          }
+        }, 1000);
+
+      } catch (error) {
+        alert('Ошибка при сохранении: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

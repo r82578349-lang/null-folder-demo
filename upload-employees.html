@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Загрузить из Excel — Нулевая Папка</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --surface: #ffffff;
+      --text: #15233b;
+      --muted: #607089;
+      --line: #dde3ec;
+      --accent: #2d5bff;
+      --ok: #1f9d57;
+      --ok-soft: #e8f8ef;
+      --warn: #d97706;
+      --warn-soft: #fff6e8;
+      --shadow: 0 10px 24px rgba(21,35,59,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 100% 0, #eaf0ff 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--line);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      background: #f8f9fb;
+      transition: all 0.3s;
+    }
+
+    .upload-area.dragover {
+      border-color: var(--accent);
+      background: #edf2ff;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .upload-area h3 {
+      margin: 0 0 8px 0;
+      font-size: 1.2rem;
+    }
+
+    .upload-area p {
+      color: var(--muted);
+      margin: 0 0 20px 0;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #2347cc;
+    }
+
+    .btn-secondary {
+      background: #edf2ff;
+      color: #163172;
+    }
+
+    .btn-secondary:hover {
+      background: #dce5ff;
+    }
+
+    .btn-success {
+      background: var(--ok);
+      color: #fff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 16px;
+      background: #f8f9fb;
+      border-radius: 10px;
+    }
+
+    .step-number {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      line-height: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step h4 {
+      margin: 0 0 4px 0;
+      font-size: 0.95rem;
+    }
+
+    .step p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .result {
+      display: none;
+      margin-top: 24px;
+    }
+
+    .result.visible {
+      display: block;
+    }
+
+    .result-success {
+      background: var(--ok-soft);
+      color: var(--ok);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .result-warning {
+      background: var(--warn-soft);
+      color: var(--warn);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .preview-table th,
+    .preview-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .preview-table th {
+      background: #f8f9fb;
+      font-weight: 600;
+    }
+
+    .preview-table tr:hover {
+      background: #f8f9fb;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading.visible {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid var(--line);
+      border-top: 3px solid var(--accent);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .steps {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Загрузить сотрудников из Excel</h1>
+      <a href="2-employees-mvp.html" class="back-link">← К списку сотрудников</a>
+    </div>
+
+    <div class="card">
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h4>Скачайте шаблон</h4>
+          <p>Используйте наш шаблон Excel</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h4>Заполните данные</h4>
+          <p>Внесите информацию о сотрудниках</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h4>Загрузите файл</h4>
+          <p>Система добавит всех автоматически</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 24px;">
+        <a href="_content/Список_работников_Акт-допуск.xlsx" download class="btn btn-secondary">
+          📥 Скачать шаблон Excel
+        </a>
+      </div>
+
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📄</div>
+        <h3>Перетащите файл сюда</h3>
+        <p>или нажмите кнопку ниже для выбора файла</p>
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+          Выбрать файл Excel
+        </button>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" />
+        <p style="margin-top: 16px; font-size: 0.85rem; color: var(--muted);">
+          Поддерживаются форматы: .xlsx, .xls
+        </p>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Обработка файла...</p>
+      </div>
+
+      <div class="result" id="result">
+        <div class="result-success" id="successResult" style="display: none;">
+          <strong>✓ Успешно!</strong><br>
+          Найдено сотрудников: <span id="foundCount">0</span>
+        </div>
+
+        <div class="result-warning" id="warningResult" style="display: none;">
+          <strong>⚠ Внимание!</strong><br>
+          <span id="warningText"></span>
+        </div>
+
+        <h3>Предварительный просмотр:</h3>
+        <div style="overflow-x: auto;">
+          <table class="preview-table" id="previewTable">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>ФИО</th>
+                <th>Тип</th>
+                <th>Гражданство</th>
+                <th>Дата рождения</th>
+                <th>Должность</th>
+                <th>Патент</th>
+              </tr>
+            </thead>
+            <tbody id="previewBody">
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px;">
+            Назначить на объект (опционально):
+          </label>
+          <select id="assignObject" style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px;">
+            <option value="">Не назначать</option>
+            <option value="1">ЖК Северный</option>
+            <option value="2">ТЦ Южный</option>
+            <option value="3">Офисный центр Восток</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-success" id="confirmBtn">Подтвердить и добавить всех</button>
+          <button class="btn btn-secondary" onclick="location.reload()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Подключаем библиотеку SheetJS для чтения Excel -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <script src="js/employees.js"></script>
+  <script>
+    let parsedEmployees = [];
+
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+    const successResult = document.getElementById('successResult');
+    const warningResult = document.getElementById('warningResult');
+    const previewBody = document.getElementById('previewBody');
+    const confirmBtn = document.getElementById('confirmBtn');
+
+    // Drag & Drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    });
+
+    // File input
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    });
+
+    // Обработка файла
+    function handleFile(file) {
+      if (!file.name.match(/\.(xlsx|xls)$/)) {
+        alert('Пожалуйста, выберите файл Excel (.xlsx или .xls)');
+        return;
+      }
+
+      uploadArea.style.display = 'none';
+      loading.classList.add('visible');
+
+      EmployeesManager.importFromExcel(file, (error, employees) => {
+        loading.classList.remove('visible');
+
+        if (error) {
+          alert('Ошибка при чтении файла: ' + error.message);
+          uploadArea.style.display = 'block';
+          return;
+        }
+
+        if (employees.length === 0) {
+          warningResult.style.display = 'block';
+          document.getElementById('warningText').textContent = 'В файле не найдено данных о сотрудниках. Проверьте, что файл заполнен правильно.';
+          result.classList.add('visible');
+          return;
+        }
+
+        parsedEmployees = employees;
+        displayPreview(employees);
+      });
+    }
+
+    // Отображение предпросмотра
+    function displayPreview(employees) {
+      successResult.style.display = 'block';
+      document.getElementById('foundCount').textContent = employees.length;
+
+      previewBody.innerHTML = '';
+      employees.forEach((emp, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${emp.fullName}</td>
+          <td>${emp.type || 'Рабочий'}</td>
+          <td>${emp.citizenship}</td>
+          <td>${emp.birthDate}</td>
+          <td>${emp.position}</td>
+          <td>${emp.patent ? emp.patent.number : '—'}</td>
+        `;
+        previewBody.appendChild(row);
+      });
+
+      result.classList.add('visible');
+    }
+
+    // Подтверждение и сохранение
+    confirmBtn.addEventListener('click', () => {
+      const objectId = document.getElementById('assignObject').value;
+
+      // Назначаем объект если выбран
+      if (objectId) {
+        parsedEmployees.forEach(emp => {
+          emp.objectId = objectId;
+        });
+      }
+
+      // Сохраняем всех сотрудников
+      try {
+        EmployeesManager.addBulk(parsedEmployees);
+        alert(`Успешно добавлено ${parsedEmployees.length} сотрудников!`);
+        window.location.href = '2-employees-mvp.html';
+      } catch (error) {
+        alert('Ошибка при сохранении: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
